@@ -1,0 +1,171 @@
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+const crypto = require("crypto");
+const axios = require("axios");
+const multer = require('multer');
+const upload = multer();
+const fs = require('fs');
+
+const rawConfig = fs.readFileSync('config.json');
+const config = JSON.parse(rawConfig);
+
+// MySQL 데이터베이스 연결 설정
+const db = mysql.createConnection({
+    host: config.mysql.host,
+    user: config.mysql.user,
+    password: config.mysql.password,
+    database: config.mysql.database,
+});
+
+// 데이터베이스 연결
+db.connect((err) => {
+    if (err) throw err;
+    console.log('MySQL 데이터베이스에 연결되었습니다.');
+});
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use(express.json());
+
+// 사용자 데이터 저장
+app.post('/saveUserData', (req, res) => {
+    let sql = 'INSERT INTO users SET ?';
+    let newUser = {
+        name: req.body.name,
+        phone: req.body.phone,
+        account: req.body.account
+    };
+    db.query(sql, newUser, (err, result) => {
+        if (err) throw err;
+        res.send('사용자 정보가 데이터베이스에 저장되었습니다.');
+    });
+});
+
+// 사용자 데이터 검색
+app.get('/getUserData', (req, res) => {
+    let sql = 'SELECT * FROM users';
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+
+// 사용자 데이터 삭제 라우트
+app.post('/delete-user', (req, res) => {
+    const userId = req.body.id; // 클라이언트에서 전송한 사용자 ID
+
+    // 데이터베이스에서 해당 사용자 ID를 가진 레코드 삭제
+    const sql = 'DELETE FROM users WHERE id = ?';
+    db.query(sql, [userId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('사용자 데이터 삭제 실패');
+            return;
+        }
+
+        // 삭제 성공 응답
+        res.send('사용자 데이터가 삭제되었습니다.');
+    });
+});
+
+const coolsms = require("coolsms-node-sdk").default;
+const messageService = new coolsms(config.coolsms.apikey, config.coolsms.apikey2);
+
+// 단일 발송 예제
+app.post('/send-sms', (req, res) => {
+    const { to, text } = req.body; // 요청 본문에서 전화번호와 문자 내용을 받음
+
+    messageService.sendOne({
+        to: to,
+        from: "01050422652", // 여기에 발신자 번호를 입력
+        text: text
+    }).then(response => {
+        console.log(response);
+        res.send({ status: 'success', message: '문자가 발송되었습니다.' });
+    }).catch(err => {
+        console.error(err);
+        res.send({ status: 'error', message: '문자 발송 실패' });
+    });
+});
+
+//부고장
+app.post('/submit-obituary-notice', upload.none(), (req, res) => {
+    // 애도 메시지를 요청 본문에서 가져옵니다.
+    const obituarynoticeMessage = req.body.obituarynoticeMessage;
+
+    // 애도 메시지가 비어있는지 확인
+    if (!obituarynoticeMessage) {
+        res.status(400).send('애도 메시지가 필요합니다.');
+        //console.log(obituarynoticeMessage);
+        return;
+    }
+
+    // 데이터베이스에 저장할 쿼리를 작성합니다.
+    let sql = 'INSERT INTO obituarynotice SET ?';
+    let newobituarynotice = {
+        contents: obituarynoticeMessage,
+    };
+
+    // 쿼리 실행
+    db.query(sql, newobituarynotice, (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('메시지 저장 실패');
+            return;
+        }
+        res.send('메시지가 저장되었습니다.');
+    });
+});
+
+//부고장 정보 받아오기
+app.get('/get-obituary-data', (req, res) => {
+    // 예시로 'id' 매개변수를 사용하여 특정 부고장 데이터를 조회합니다.
+    // 실제 구현에 따라 적절한 식별자나 조건을 사용해야 합니다.
+    const obituaryId = req.query.id;
+
+    const sql = 'SELECT * FROM obituarynotice WHERE id = ?';
+    db.query(sql, [obituaryId], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('부고장 데이터 조회 실패');
+            return;
+        }
+
+        if (results.length > 0) {
+            // 부고장 데이터가 존재하는 경우
+            const obituaryData = results[0];
+            res.json({
+                name: obituaryData.name, // 부고자 이름
+                date: obituaryData.date, // 작성 날짜
+                // 기타 필요한 데이터
+            });
+        } else {
+            // 해당 ID의 부고장 데이터가 없는 경우
+            res.status(404).send('부고장 데이터가 존재하지 않습니다.');
+        }
+    });
+});
+
+// 부고 정보 저장 라우트
+app.post('/submit-obituary-info', (req, res) => {
+    const { name, date, userId } = req.body;  // 클라이언트에서 전송한 이름과 날짜
+
+    // 데이터베이스에 저장할 쿼리를 작성합니다.
+    const sql = 'INSERT INTO obituaryinfo (name, date, userId) VALUES (?, ?, ?)';
+    db.query(sql, [name, date, userId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('부고 정보 저장 실패');
+            return;
+        }
+
+        // 저장 성공 응답
+        res.send('부고 정보가 저장되었습니다.');
+    });
+});
+
+app.listen(3000, () => {
+    console.log('서버가 3000번 포트에서 실행 중입니다.');
+});
