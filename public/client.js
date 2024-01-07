@@ -5,6 +5,7 @@ document.getElementById('userInfoForm').addEventListener('submit', function (e) 
     var name = document.getElementById('name').value.trim();
     var phone = document.getElementById('phone').value.trim();
     var account = document.getElementById('account').value.trim();
+    var room = document.getElementById('room').value.trim();
 
     // 이름과 전화번호가 비어있는지 검사
     if (name === '' || phone === '') {
@@ -16,47 +17,76 @@ document.getElementById('userInfoForm').addEventListener('submit', function (e) 
     fetch('/saveUserData', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json'
         },
-        body: `name=${name}&phone=${phone}&account=${account}`
+        body: JSON.stringify({ name, phone, account, room }) // room 번호 포함
     })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            alert(data);
-            fetchUserData();
+            alert(data.message);  // 서버로부터 받은 메시지를 알림으로 표시
+            window.location.reload();  // 알림 확인 후 페이지 새로고침
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
 });
 
-function fetchUserData() {
-    fetch('/getUserData')
+// fetch('/saveUserData', {
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({ name, phone, account, room }) // room 번호 포함
+// })
+// .then(response => response.json())
+// .then(data => {
+//     alert(data.message);  // 서버로부터 받은 메시지를 알림으로 표시
+//     window.location.reload();  // 알림 확인 후 페이지 새로고침
+// })
+// .catch(error => {
+//     console.error('Error:', error);
+// });
+
+function fetchUserData(room) {
+    fetch(`/getUserData?room=${room}`)
         .then(response => response.json())
-        .then(data => {
+        .then(responseData => {
             var display = document.getElementById('userInfoDisplay');
-            var table = '<table>';
-            table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>문자발송</th><th>삭제</th><th>정보</th></tr>';
 
-            data.forEach(function (user) {
-                table += '<tr>';
-                table += '<td>' + user.name + '</td>';
-                table += '<td>' + user.phone + '</td>';
-                table += '<td>' + user.account + '</td>';
-                table += '<td><button class="send-sms-button" data-phone="' + user.phone + '">문자 발송</button></td>';
-                table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
-                table += '<td><button onclick="showObituaryInfoModal(' + user.Id + ')">정보 입력</button></td>';
-                table += '</tr>';
-            });
-
-            table += '</table>';
-            display.innerHTML = table;
-
-            // 클래스를 사용하여 이벤트 리스너 등록
-            document.querySelectorAll('.send-sms-button').forEach(button => {
-                button.addEventListener('click', function () {
-                    sendMessage(this.getAttribute('data-phone'));
+            // 서버 응답의 'status'를 확인하고 'data' 배열 처리
+            if (responseData.status === 'success' && Array.isArray(responseData.data)) {
+                var table = '<table>';
+                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>문자발송</th><th>삭제</th><th>정보</th></tr>';
+                responseData.data.forEach(function (user) {
+                    table += '<tr>';
+                    table += '<td>' + user.name + '</td>';
+                    table += '<td>' + user.phone + '</td>';
+                    table += '<td>' + user.account + '</td>';
+                    table += '<td>' + user.room + '</td>';
+                    table += '<td><button class="send-sms-button" data-phone="' + user.phone + '">문자 발송</button></td>';
+                    table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
+                    table += '<td><button onclick="showObituaryInfoModal(' + user.Id + ')">정보 입력</button></td>';
+                    table += '</tr>';
                 });
-            });
+                table += '</table>';
+                display.innerHTML = table;
+            } else {
+                // 성공적인 'status'가 아니거나 'data'가 배열이 아닌 경우
+                display.innerHTML = '사용자 데이터를 불러오는 데 실패했습니다.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
 }
+
+// room 번호별 버튼 클릭 이벤트 처리
+document.querySelectorAll('.room-button').forEach(button => {
+    button.addEventListener('click', function () {
+        var room = this.getAttribute('data-room');
+        fetchUserData(room);
+    });
+});
 
 function sendMessage(phoneNumber) {
     var message = "http://192.168.219.102:5500/public/obituary%20notice.html"; // 보낼 메시지 내용
@@ -137,13 +167,20 @@ function submitObituaryInfo(event) {
         },
         body: JSON.stringify({ name, date, userId })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // 부고장 페이지로 리다이렉트하거나 링크를 제공합니다.
-                window.location.href = data.obituaryPageUrl;
+        .then(response => {
+            if (response.headers.get('Content-Type').includes('application/json')) {
+                return response.json();
             } else {
-                alert(data.message);
+                return response.text();
+            }
+        })
+        .then(data => {
+            // 서버 응답을 alert로 표시
+            alert(data.message || data);
+
+            if (data.status === 'success') {
+                // 저장이 완료되면 페이지를 새로고침합니다.
+                window.location.reload();
             }
         })
         .catch(error => {

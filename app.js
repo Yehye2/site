@@ -31,24 +31,39 @@ app.use(express.json());
 
 // 사용자 데이터 저장
 app.post('/saveUserData', (req, res) => {
-    let sql = 'INSERT INTO users SET ?';
+    let sql = 'INSERT INTO users (name, phone, account, room) VALUES (?, ?, ?, ?)';
     let newUser = {
         name: req.body.name,
         phone: req.body.phone,
-        account: req.body.account
+        account: req.body.account,
+        room: req.body.room // 사용자가 선택한 호실
     };
-    db.query(sql, newUser, (err, result) => {
-        if (err) throw err;
-        res.send('사용자 정보가 데이터베이스에 저장되었습니다.');
+    db.query(sql, [newUser.name, newUser.phone, newUser.account, newUser.room], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ message: '사용자 정보 저장 실패' }); // JSON 응답으로 변경
+            return;
+        }
+        res.json({ message: '사용자 정보가 데이터베이스에 저장되었습니다.' }); // JSON 응답으로 변경
     });
 });
 
 // 사용자 데이터 검색
 app.get('/getUserData', (req, res) => {
-    let sql = 'SELECT * FROM users';
-    db.query(sql, (err, results) => {
-        if (err) throw err;
-        res.json(results);
+    const room = req.query.room;
+
+    // room 번호에 해당하는 사용자 데이터를 불러오는 SQL 쿼리
+    const sql = 'SELECT * FROM users WHERE room = ?';
+
+    db.query(sql, [room], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ status: 'error', message: '데이터 불러오기 실패' });
+            return;
+        }
+
+        // 조회된 사용자 데이터를 JSON 형식으로 클라이언트에 반환
+        res.json({ status: 'success', data: results });
     });
 });
 
@@ -162,7 +177,7 @@ app.post('/submit-obituary-info', (req, res) => {
         }
 
         // 저장 성공 응답
-        res.send('부고 정보가 저장되었습니다.');
+        res.send('정보가 저장되었습니다.');
     });
 });
 

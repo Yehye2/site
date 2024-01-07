@@ -156,17 +156,17 @@
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/get-obituary-data')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('deceasedName').textContent = data.name;
-                    document.getElementById('creationDate').textContent = data.date + '에 작성됨';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     fetch('/get-obituary-data')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             document.getElementById('deceasedName').textContent = data.name;
+        //             document.getElementById('creationDate').textContent = data.date + '에 작성됨';
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //         });
+        // });
     </script>
 
 </body>
