@@ -31,22 +31,6 @@ document.getElementById('userInfoForm').addEventListener('submit', function (e) 
         });
 });
 
-// fetch('/saveUserData', {
-//     method: 'POST',
-//     headers: {
-//         'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({ name, phone, account, room }) // room 번호 포함
-// })
-// .then(response => response.json())
-// .then(data => {
-//     alert(data.message);  // 서버로부터 받은 메시지를 알림으로 표시
-//     window.location.reload();  // 알림 확인 후 페이지 새로고침
-// })
-// .catch(error => {
-//     console.error('Error:', error);
-// });
-
 function fetchUserData(room) {
     fetch(`/getUserData?room=${room}`)
         .then(response => response.json())
