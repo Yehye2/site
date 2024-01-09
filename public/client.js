@@ -49,7 +49,7 @@ function fetchUserData(room) {
                     table += '<td>' + user.room + '</td>';
                     table += '<td><button class="send-sms-button" data-phone="' + user.phone + '">문자 발송</button></td>';
                     table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
-                    table += '<td><button onclick="showObituaryInfoModal(' + user.Id + ')">정보 입력</button></td>';
+                    table += '<td><button onclick="showObituaryInfoModal(' + user.Id + ')">정보</button></td>';
                     table += '</tr>';
                 });
                 table += '</table>';
@@ -102,36 +102,33 @@ function deleteUserData(userId) {
         });
 }
 
-// 모달을 표시하는 함수
 function showObituaryInfoModal(userId) {
-    document.getElementById('obituaryUserId').value = userId; // 숨겨진 필드에 userId를 설정합니다.
-    document.getElementById('obituaryInfoModal').style.display = 'block';
-}
-
-// 모달의 정보를 서버로 전송하는 함수
-function submitObituaryInfo(event) {
-    event.preventDefault();
-    var name = document.getElementById('obituaryName').value;
-    var date = document.getElementById('obituaryDate').value;
-    var userId = document.getElementById('obituaryUserId').value; // 숨겨진 필드에서 userId를 가져옵니다.
-
-    fetch('/submit-obituary-info', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: name,
-            date: date,
-            userId: userId
-        })
-    })
-        .then(response => response.text())
+    fetch(`/getObituaryInfo?userId=${userId}`)
+        .then(response => response.json())
         .then(data => {
-            alert(data);
-            document.getElementById('obituaryInfoModal').style.display = 'none';
+            const nameInput = document.getElementById('obituaryName');
+            const dateInput = document.getElementById('obituaryDateInput'); // 날짜 입력 필드
+            const dateText = document.getElementById('obituaryDateText'); // 날짜 텍스트 필드
+            const userIdInput = document.getElementById('obituaryUserId');
+            const modal = document.getElementById('obituaryInfoModal');
+
+            if (data.status === 'success') {
+                nameInput.value = data.obituary.name;
+                dateInput.value = data.obituary.date; // 날짜 입력 필드에 날짜 설정
+                dateText.textContent = data.obituary.date; // 날짜 텍스트 필드에 날짜 설정
+                dateText.style.display = 'block'; // 날짜 텍스트 표시
+                dateInput.style.display = 'none'; // 날짜 입력 필드 숨김
+                userIdInput.value = userId;
+            } else {
+                nameInput.value = '';
+                dateInput.style.display = 'block'; // 날짜 입력 필드 표시
+                dateText.style.display = 'none'; // 날짜 텍스트 숨김
+                userIdInput.value = userId;
+            }
+
+            modal.style.display = 'block';
         })
-        .catch((error) => {
+        .catch(error => {
             console.error('Error:', error);
         });
 }

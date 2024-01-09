@@ -163,6 +163,40 @@ app.get('/get-obituary-data', (req, res) => {
     });
 });
 
+//부고 정보 조회 엔드포인트
+app.get('/getObituaryInfo', (req, res) => {
+    const userId = req.query.userId;
+    // userId를 사용하여 부고 정보를 조회하는 SQL 쿼리
+    const sql = 'SELECT * FROM obituaryinfo WHERE userId = ?';
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ status: 'error', message: '정보 조회 실패' });
+            return;
+        }
+        if (results.length > 0) {
+            res.json({ status: 'success', obituary: results[0] });
+        } else {
+            res.json({ status: 'not found', obituary: null });
+        }
+    });
+});
+
+//부고 정보 업데이트
+app.post('/updateObituaryInfo', (req, res) => {
+    const { userId, name, date } = req.body;
+    // 부고 정보를 업데이트하는 SQL 쿼리
+    const sql = 'UPDATE obituaryinfo SET name = ?, date = ? WHERE userId = ?';
+    db.query(sql, [name, date, userId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ status: 'error', message: '정보 업데이트 실패' });
+            return;
+        }
+        res.json({ status: 'success', message: '부고 정보가 업데이트되었습니다.' });
+    });
+});
+
 // 부고 정보 저장 라우트
 app.post('/submit-obituary-info', (req, res) => {
     const { name, date, userId } = req.body;  // 클라이언트에서 전송한 이름과 날짜
