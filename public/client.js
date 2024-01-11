@@ -115,6 +115,7 @@ function deleteUserData(userId) {
         });
 }
 
+//I want to mark the date only for the year, month, and day.
 function showObituaryInfoModal(userId) {
     fetch(`/getObituaryInfo?userId=${userId}`)
         .then(response => response.json())
@@ -128,7 +129,11 @@ function showObituaryInfoModal(userId) {
             if (data.status === 'success') {
                 nameInput.value = data.obituary.name;
                 dateInput.value = data.obituary.date; // 날짜 입력 필드에 날짜 설정
-                dateText.textContent = data.obituary.date; // 날짜 텍스트 필드에 날짜 설정
+                const date = new Date(data.obituary.date);
+                const year = date.getFullYear(); // Extract the year from the date
+                const month = date.getMonth() + 1; // Extract the month from the date (months are zero-based)
+                const day = date.getDate(); // Extract the day from the date
+                dateText.textContent = `${year}-${month}-${day}`; // Display the year, month, and day in the date text field
                 dateText.style.display = 'block'; // 날짜 텍스트 표시
                 dateInput.style.display = 'none'; // 날짜 입력 필드 숨김
                 userIdInput.value = userId;
