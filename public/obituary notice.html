@@ -114,8 +114,8 @@
 
         <div class="content">
             <h1>訃告</h1>
-            <p id="deceasedName">홍길동</p>
-            <p id="creationDate">2021년 10월 1일</p>
+            <p id="obituaryName">홍길동</p>
+            <p id="obituaryDateText">2021년 10월 1일</p>
         </div>
 
         <div class="content">
@@ -156,17 +156,24 @@
                 });
         }
 
-        // document.addEventListener('DOMContentLoaded', function () {
-        //     fetch('/get-obituary-data')
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             document.getElementById('deceasedName').textContent = data.name;
-        //             document.getElementById('creationDate').textContent = data.date + '에 작성됨';
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //         });
-        // });
+        document.addEventListener('DOMContentLoaded', function () {
+            var params = new URLSearchParams(window.location.search);
+            var userId = params.get('userId');
+
+            if (userId) {
+                fetch(`/getObituaryInfo?userId=${userId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('obituaryName').textContent = data.obituary.name;
+                        document.getElementById('obituaryDateText').textContent = data.obituary.date + '에 작성됨';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                console.log('userId 파라미터가 URL에 없습니다.');
+            }
+        });
     </script>
 
 </body>

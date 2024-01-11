@@ -47,9 +47,10 @@ function fetchUserData(room) {
                     table += '<td>' + user.phone + '</td>';
                     table += '<td>' + user.account + '</td>';
                     table += '<td>' + user.room + '</td>';
-                    table += '<td><button class="send-sms-button" data-phone="' + user.phone + '">문자 발송</button></td>';
+                    table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-userId="' + user.Id + '">문자 발송</button>';
                     table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
                     table += '<td><button onclick="showObituaryInfoModal(' + user.Id + ')">정보</button></td>';
+                    table += '<td><button onclick="obituaryButton(' + user.Id + ')">부고장</button></td>';
                     table += '</tr>';
                 });
                 table += '</table>';
@@ -64,6 +65,10 @@ function fetchUserData(room) {
         });
 }
 
+function obituaryButton(userId) {
+    window.location.href = 'obituary notice.html?userId=' + userId;
+}
+
 // room 번호별 버튼 클릭 이벤트 처리
 document.querySelectorAll('.room-button').forEach(button => {
     button.addEventListener('click', function () {
@@ -72,8 +77,16 @@ document.querySelectorAll('.room-button').forEach(button => {
     });
 });
 
-function sendMessage(phoneNumber) {
-    var message = "http://192.168.219.102:5500/public/obituary%20notice.html"; // 보낼 메시지 내용
+document.getElementById('userInfoDisplay').addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('send-sms-button')) {
+        var phoneNumber = e.target.getAttribute('data-phone');
+        var userId = e.target.getAttribute('data-userId');
+        sendMessage(phoneNumber, userId);
+    }
+});
+
+function sendMessage(phoneNumber, userId) {
+    var message = "http://192.168.219.110:5500/public/obituary%20notice.html?userId=" + userId; // 보낼 메시지 내용
 
     axios.post('/send-sms', { to: phoneNumber, text: message })
         .then(response => {
@@ -138,7 +151,7 @@ document.getElementById('obituaryInfoForm').addEventListener('submit', submitObi
 function submitObituaryInfo(event) {
     event.preventDefault();
     var name = document.getElementById('obituaryName').value;
-    var date = document.getElementById('obituaryDate').value;
+    var date = document.getElementById('obituaryDateInput').value;
     var userId = document.getElementById('obituaryUserId').value;
 
     fetch('/submit-obituary-info', {
