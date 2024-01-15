@@ -31,14 +31,15 @@ app.use(express.json());
 
 // 사용자 데이터 저장
 app.post('/saveUserData', (req, res) => {
-    let sql = 'INSERT INTO users (name, phone, account, room) VALUES (?, ?, ?, ?)';
+    let sql = 'INSERT INTO users (name, phone, account, room, relationship) VALUES (?, ?, ?, ?, ?)';
     let newUser = {
         name: req.body.name,
         phone: req.body.phone,
         account: req.body.account,
-        room: req.body.room // 사용자가 선택한 호실
+        room: req.body.room,
+        relationship: req.body.relationship
     };
-    db.query(sql, [newUser.name, newUser.phone, newUser.account, newUser.room], (err, result) => {
+    db.query(sql, [newUser.name, newUser.phone, newUser.account, newUser.room, newUser.relationship], (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).json({ message: '사용자 정보 저장 실패' }); // JSON 응답으로 변경

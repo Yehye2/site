@@ -6,6 +6,7 @@ document.getElementById('userInfoForm').addEventListener('submit', function (e) 
     var phone = document.getElementById('phone').value.trim();
     var account = document.getElementById('account').value.trim();
     var room = document.getElementById('room').value.trim();
+    var relationship = document.getElementById('relationship').value.trim();
 
     // 이름과 전화번호가 비어있는지 검사
     if (name === '' || phone === '') {
@@ -19,7 +20,7 @@ document.getElementById('userInfoForm').addEventListener('submit', function (e) 
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, phone, account, room }) // room 번호 포함
+        body: JSON.stringify({ name, phone, account, room, relationship }) // room 번호 포함
     })
         .then(response => response.json())
         .then(data => {
@@ -40,13 +41,14 @@ function fetchUserData(room) {
             // 서버 응답의 'status'를 확인하고 'data' 배열 처리
             if (responseData.status === 'success' && Array.isArray(responseData.data)) {
                 var table = '<table>';
-                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>문자발송</th><th>삭제</th><th>정보</th></tr>';
+                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>가족관계</th><th>문자발송</th><th>삭제</th><th>정보</th></tr>';
                 responseData.data.forEach(function (user) {
                     table += '<tr>';
                     table += '<td>' + user.name + '</td>';
                     table += '<td>' + user.phone + '</td>';
                     table += '<td>' + user.account + '</td>';
                     table += '<td>' + user.room + '</td>';
+                    table += '<td>' + user.relationship + '</td>';
                     table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-userId="' + user.Id + '">문자 발송</button>';
                     table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
                     table += '<td><button onclick="showObituaryInfoModal(' + user.Id + ')">정보</button></td>';
@@ -115,6 +117,10 @@ function deleteUserData(userId) {
         });
 }
 
+document.getElementById('closeObituaryInfoModal').addEventListener('click', function () {
+    document.getElementById('obituaryInfoModal').style.display = 'none';
+});
+
 //I want to mark the date only for the year, month, and day.
 function showObituaryInfoModal(userId) {
     fetch(`/getObituaryInfo?userId=${userId}`)
@@ -137,11 +143,15 @@ function showObituaryInfoModal(userId) {
                 dateText.style.display = 'block'; // 날짜 텍스트 표시
                 dateInput.style.display = 'none'; // 날짜 입력 필드 숨김
                 userIdInput.value = userId;
+                document.getElementById('saveObituaryInfo').style.display = 'none'; // 정보 저장 버튼 숨김
+                document.getElementById('editObituaryInfo').style.display = 'block'; // 정보 수정 버튼 표시
             } else {
                 nameInput.value = '';
                 dateInput.style.display = 'block'; // 날짜 입력 필드 표시
                 dateText.style.display = 'none'; // 날짜 텍스트 숨김
                 userIdInput.value = userId;
+                document.getElementById('saveObituaryInfo').style.display = 'block'; // 정보 저장 버튼 표시
+                document.getElementById('editObituaryInfo').style.display = 'none'; // 정보 수정 버튼 숨김
             }
 
             modal.style.display = 'block';

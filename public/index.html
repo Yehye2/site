@@ -94,7 +94,10 @@
             <label for="phone">전화번호:</label>
             <input type="text" id="phone" name="phone"><br>
 
-            <label for="account">계정:</label>
+            <label for="relationship">가족관계:</label>
+            <input type="text" id="relationship" name="relationship"><br>
+
+            <label for="account">계좌번호:</label>
             <input type="text" id="account" name="account"><br>
 
             <label for="room">호실:</label>
@@ -114,8 +117,10 @@
         <div id="userInfoDisplay"></div>
     </div>
 
-    <div id="obituaryInfoModal" style="display:none;">
+    <div id="obituaryInfoModal" style="display:none; position: relative;">
         <form id="obituaryInfoForm">
+            <button id="closeObituaryInfoModal" type="button"
+                style="position: absolute; top: 10px; right: -30px; z-index: 10;">X</button>
             <label for="obituaryName">이름:</label>
             <input type="text" id="obituaryName" name="name"><br>
 
@@ -124,7 +129,9 @@
             <input type="date" id="obituaryDateInput" name="date" style="display:none;"><br>
             <input type="hidden" id="obituaryUserId" name="userId">
 
-            <button type="submit">정보 저장</button>
+            <button type="submit" id="saveObituaryInfo">정보 저장</button>
+            <button type="button" id="editObituaryInfo" style="display:none;">정보 수정</button>
+
         </form>
     </div>
 
