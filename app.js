@@ -106,6 +106,19 @@ app.post('/send-sms', (req, res) => {
     });
 });
 
+// Endpoint to receive and save the content
+app.post('/saveObituary', (req, res) => {
+    const { content } = req.body; // The edited content sent from the client
+    // SQL query to update the obituary content
+    const query = 'INSERT INTO obituarynotice (admission, funeralDate, burialDate,bankAccount) VALUES (?, ?, ?,?)';
+
+    connection.query(query, [content, 1], (error, results) => { // Assuming '1' is the id of the obituary
+        if (error) {
+            return res.status(500).send('Error saving to database');
+        }
+        res.send('Content successfully saved');
+    });
+});
 //부고장
 app.post('/submit-obituary-notice', upload.none(), (req, res) => {
     // 애도 메시지를 요청 본문에서 가져옵니다.
@@ -213,6 +226,47 @@ app.post('/submit-obituary-info', (req, res) => {
 
         // 저장 성공 응답
         res.send('정보가 저장되었습니다.');
+    });
+});
+
+// Route to handle adding a new product
+app.post('/add-product', (req, res) => {
+    const { name, price } = req.body;
+    const query = 'INSERT INTO products (name, price) VALUES (?, ?)';
+
+    db.query(query, [name, price], (err, result) => {
+        if (err) {
+            // Handle errors
+            res.status(500).send('Error adding product');
+        } else {
+            // Send a success response
+            res.status(200).send('Product added successfully');
+        }
+    });
+});
+
+// 상품 목록 조회
+app.get('/api/products', (req, res) => {
+    const query = 'SELECT * FROM products'; // 'products'는 상품 데이터를 저장하는 테이블 이름입니다.
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).json({ message: '상품 조회 중 오류 발생' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// 상품 삭제
+app.delete('/api/products/:id', (req, res) => {
+    const productId = req.params.id;
+    const query = 'DELETE FROM products WHERE id = ?';
+    db.query(query, [productId], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: '상품 삭제 중 오류 발생' });
+            return;
+        }
+        res.status(200).json({ message: '상품 삭제 완료' });
     });
 });
 

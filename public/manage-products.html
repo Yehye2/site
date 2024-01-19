@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-2xl font-bold mb-8">Product Management</h1>
+
+        <!-- 상품 목록 섹션 -->
+        <div id="product-list" class="mb-8">
+            <h2 class="text-xl font-semibold">Products</h2>
+            <!-- 여기에 상품 목록이 표시됩니다 -->
+        </div>
+
+        <!-- 새 상품 추가 섹션 -->
+        <div id="add-product" class="mb-8">
+            <h2 class="text-xl font-semibold">Add New Product</h2>
+            <form id="add-product-form">
+                <input type="text" id="product-name" placeholder="Product Name" class="border p-2 rounded mr-2">
+                <input type="number" id="product-price" placeholder="Product Price" class="border p-2 rounded mr-2">
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded">Add Product</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="manage-products.js"></script>
+</body>
+
+</html>

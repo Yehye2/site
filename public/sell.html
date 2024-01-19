@@ -62,4 +62,33 @@
     </div>
 </body>
 
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const addProductForm = document.getElementById('add-product-form');
+
+        addProductForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const productName = document.getElementById('product-name').value;
+            const productPrice = document.getElementById('product-price').value;
+
+            // AJAX request to the server to add the product
+            fetch('/add-product', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: productName, price: productPrice })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    // TODO: Refresh the product list or add the new product to the list without refreshing the page
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+</script>
+
 </html>
