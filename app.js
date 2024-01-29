@@ -108,17 +108,26 @@ app.post('/send-sms', (req, res) => {
 
 // Endpoint to receive and save the content
 app.post('/saveObituary', (req, res) => {
-    const { content } = req.body; // The edited content sent from the client
-    // SQL query to update the obituary content
-    const query = 'INSERT INTO obituarynotice (admission, funeralDate, burialDate,bankAccount) VALUES (?, ?, ?,?)';
+    const { userId, admission, funeralDate, burialDate, bankAccount } = req.body;
 
-    connection.query(query, [content, 1], (error, results) => { // Assuming '1' is the id of the obituary
+    // Check if userId is provided
+    if (!userId) {
+        return res.status(400).send('User ID is required');
+    }
+
+    // SQL query to insert the obituary content with userId
+    const query = 'INSERT INTO obituarynotice (userId, admission, funeralDate, burialDate, bankAccount) VALUES (?, ?, ?, ?, ?)';
+
+    db.query(query, [userId, admission, funeralDate, burialDate, bankAccount], (error, results) => {
         if (error) {
+            console.error(error);  // Log the error for debugging
             return res.status(500).send('Error saving to database');
         }
         res.send('Content successfully saved');
     });
 });
+
+
 //부고장
 app.post('/submit-obituary-notice', upload.none(), (req, res) => {
     // 애도 메시지를 요청 본문에서 가져옵니다.
@@ -145,6 +154,39 @@ app.post('/submit-obituary-notice', upload.none(), (req, res) => {
             return;
         }
         res.send('메시지가 저장되었습니다.');
+    });
+});
+
+app.get('/getobituarynotice', (req, res) => {
+    const userId = req.query.userId;
+    if (!userId) {
+        res.status(400).send('User ID is required');
+        return;
+    }
+
+    const query = 'SELECT admission, funeralDate, burialDate, bankAccount FROM obituarynotice WHERE userId = ?';
+
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error fetching obituary information');
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).send('User not found');
+            return;
+        }
+
+        const obituaryInfo = results[0];
+        res.json({
+            obituary: {
+                admission: obituaryInfo.admission,
+                funeralDate: obituaryInfo.funeralDate,
+                burialDate: obituaryInfo.burialDate,
+                bankAccount: obituaryInfo.bankAccount
+            }
+        });
     });
 });
 

@@ -133,130 +133,131 @@
                 </div>
                 <div class="obituary-field">
                     <h3>발인:</h3>
-                    <p id="funeral-date" contenteditable="true">2024년 1월 21일 오후 2시</p>
+                    <p id="funeralDate" contenteditable="true">2024년 1월 21일 오후 2시</p>
                 </div>
                 <div class="obituary-field">
                     <h3>장지:</h3>
-                    <p id="burial-date" contenteditable="true">2024년 1월 21일 오후 3시, 묘지 이름</p>
+                    <p id="burialDate" contenteditable="true">2024년 1월 21일 오후 3시, 묘지 이름</p>
                 </div>
                 <div class="obituary-field">
                     <h3>유가족 통장:</h3>
-                    <p id="bank-account" contenteditable="true">은행명: XXXXX, 계좌번호: XXXXXXXXXX</p>
+                    <p id="bankAccount" contenteditable="true">은행명: XXXXX, 계좌번호: XXXXXXXXXX</p>
 
                     <button id="saveButton">Save Changes</button>
                 </div>
+
+                <div class="footer">
+                    <button type="button" class="btn" onclick="window.location.href='sell.html'">근조화환 주문</button>
+                    <button type="button" class="btn btn-secondary" onclick="submitCondolence()">작성완료</button>
+
+                </div>
+
             </div>
-            <h2>부고장 내용</h2>
-            <form action="/submit-obituary-notice" method="post">
-                <!-- 여기서 "/submit-condolence"는 서버 측 처리 스크립트를 가리키는 URL로 변경해야 합니다. -->
-                <textarea name="obituarynoticeMessage" rows="4"
-                    style="width: 100%; box-sizing: border-box; border: 1px solid #ccc; margin-bottom: 10px; padding: 5px;"
-                    placeholder="여기에 애도 메시지를 입력하세요."></textarea>
-            </form>
         </div>
+        <script>
 
-        <div class="footer">
-            <button type="button" class="btn" onclick="window.location.href='sell.html'">근조화환 주문</button>
-            <button type="button" class="btn btn-secondary" onclick="submitCondolence()">작성완료</button>
+            document.addEventListener('DOMContentLoaded', function () {
+                var params = new URLSearchParams(window.location.search);
+                var userId = params.get('userId');
 
-        </div>
-
-    </div>
-    </div>
-    <script>
-        function submitCondolence() {
-            var form = document.querySelector('form');
-            var data = new FormData(form);
-
-            fetch('/submit-obituary-notice', {
-                method: 'POST',
-                body: data
-            })
-                .then(response => response.text())
-                .then(data => {
-                    alert(data);
-                    window.location.reload();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('오류가 발생했습니다.');
-                });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var params = new URLSearchParams(window.location.search);
-            var userId = params.get('userId');
-
-            if (userId) {
-                fetch(`/getObituaryInfo?userId=${userId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('obituaryName').textContent = data.obituary.name;
-                        document.getElementById('obituaryDateText').textContent = data.obituary.date + '에 작성됨';
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            } else {
-                console.log('userId 파라미터가 URL에 없습니다.');
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            function saveContent() {
-                const admissionElem = document.getElementById('admission');
-                const funeralDateElem = document.getElementById('funeral-date');
-                const burialDateElem = document.getElementById('burial-date');
-                const bankAccountElem = document.getElementById('bank-account');
-
-                // Check each element and log which one is missing
-                if (!admissionElem) console.error('Admission element is missing');
-                if (!funeralDateElem) console.error('Funeral Date element is missing');
-                if (!burialDateElem) console.error('Burial Date element is missing');
-                if (!bankAccountElem) console.error('Bank Account element is missing');
-
-                // Only proceed if all elements are present
-                if (admissionElem && funeralDateElem && burialDateElem && bankAccountElem) {
-                    const contentData = {
-                        admission: admissionElem.innerText,
-                        funeralDate: funeralDateElem.innerText,
-                        burialDate: burialDateElem.innerText,
-                        bankAccount: bankAccountElem.innerText
-                    };
-
-                    // Send the data to the server using the Fetch API
-                    fetch('/saveObituary', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(contentData)
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
+                if (userId) {
+                    fetch(`/getObituaryInfo?userId=${userId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('obituaryName').textContent = data.obituary.name;
+                            document.getElementById('obituaryDateText').textContent = data.obituary.date + '에 작성됨';
                         })
-                        .then(responseData => {
-                            console.log('Success:', responseData);
-                            // Provide feedback to user or update the UI as needed
-                        })
-                        .catch((error) => {
+                        .catch(error => {
                             console.error('Error:', error);
                         });
+                } else {
+                    console.log('userId 파라미터가 URL에 없습니다.');
                 }
-            }
+            });
 
-            // Attach the saveContent function to the button click event
-            const saveButton = document.getElementById('saveButton');
-            if (saveButton) {
-                saveButton.addEventListener('click', saveContent);
-            } else {
-                console.error('Save button does not exist in the DOM.');
-            }
-        });
-    </script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var params = new URLSearchParams(window.location.search);
+                var userId = params.get('userId');
+
+                if (userId) {
+                    fetch(`/getobituarynotice?userId=${userId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Update the HTML elements with the retrieved information
+                            document.getElementById('admission').textContent = data.obituary.admission;
+                            document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
+                            document.getElementById('burialDate').textContent = data.obituary.burialDate;
+                            document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                } else {
+                    console.log('userId parameter not found in URL.');
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                function saveContent() {
+                    const admissionElem = document.getElementById('admission');
+                    const funeralDateElem = document.getElementById('funeralDate');
+                    const burialDateElem = document.getElementById('burialDate');
+                    const bankAccountElem = document.getElementById('bankAccount');
+
+                    // Retrieve the user ID from URL parameters
+                    const params = new URLSearchParams(window.location.search);
+                    const userId = params.get('userId');
+
+                    // Log if any elements or the userId are missing
+                    if (!admissionElem) console.error('Admission element is missing');
+                    if (!funeralDateElem) console.error('Funeral Date element is missing');
+                    if (!burialDateElem) console.error('Burial Date element is missing');
+                    if (!bankAccountElem) console.error('Bank Account element is missing');
+                    if (!userId) console.error('User ID is missing');
+
+                    // Only proceed if all elements and the userId are present
+                    if (admissionElem && funeralDateElem && burialDateElem && bankAccountElem && userId) {
+                        const contentData = {
+                            userId: userId,
+                            admission: admissionElem.innerText,
+                            funeralDate: funeralDateElem.innerText,
+                            burialDate: burialDateElem.innerText,
+                            bankAccount: bankAccountElem.innerText
+                        };
+
+                        // Send the data to the server using the Fetch API
+                        fetch('/saveObituary', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(contentData)
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(responseData => {
+                                console.log('Success:', responseData);
+                                // Provide feedback to user or update the UI as needed
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+                    }
+                }
+
+                // Attach the saveContent function to the button click event
+                const saveButton = document.getElementById('saveButton');
+                if (saveButton) {
+                    saveButton.addEventListener('click', saveContent);
+                } else {
+                    console.error('Save button does not exist in the DOM.');
+                }
+            });
+        </script>
 
 </body>
 
