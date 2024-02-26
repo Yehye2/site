@@ -1,0 +1,123 @@
+body {
+  min-height: 100vh;
+  /* 뷰포트의 전체 높이 */
+  background: url("https://yehye.s3.ap-northeast-2.amazonaws.com/DALL%C2%B7E+2024-01-06+21.52.51+-+A+serene+and+respectful+background+image+featuring+chrysanthemums%2C+often+used+in+Korean+funeral+ceremonies.+The+image+should+have+a+subdued+and+elegan.png")
+    no-repeat center center;
+  background-size: cover;
+  /* 데스크톱과 대형 화면에 적합 */
+  background-attachment: scroll;
+  /* 모바일 호환성을 위해 scroll로 설정 */
+  background-attachment: fixed;
+  /* 배경 이미지가 스크롤될 때 고정되어 있도록 설정 */
+}
+
+@media only screen and (max-width: 767px) {
+  body {
+    background-size: auto 100%;
+    /* 모바일 화면 높이에 맞추어 배경 이미지 크기 조절 */
+    background-attachment: scroll;
+    /* 모바일에서 fixed 대신 scroll 사용 */
+  }
+}
+
+.content-wrapper {
+  position: absolute;
+  /* 이를 통해 내부 컨텐츠가 body의 높이를 늘리지 않습니다 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.navbar svg {
+  fill: #000;
+}
+
+.content + .content {
+  margin-top: -50px;
+}
+
+.content + .footer {
+  margin-top: -50px;
+}
+
+.content {
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.btn {
+  padding: 10px;
+  margin: 5px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+
+.btn:hover {
+  background-color: #282928;
+}
+
+.btn-secondary {
+  background-color: #ddd;
+  color: #000;
+}
+
+.btn-secondary:hover {
+  background-color: #c6c6c6;
+}
+
+.footer {
+  padding: 15px;
+}
+
+textarea {
+  background-color: #e8e8e8;
+  /* 배경색 */
+  border-radius: 10px;
+  /* 모서리를 둥글게 하는 정도를 조절합니다. */
+  border: 1px solid #ccc;
+  /* 테두리 색상과 스타일 */
+  padding: 10px;
+  /* 안쪽 여백을 추가합니다. */
+  width: calc(100% - 20px);
+  /* 전체 너비에서 padding 값을 뺀 값 */
+  box-sizing: border-box;
+  /* padding을 포함한 너비를 계산합니다. */
+  /* 기타 textarea 스타일 */
+}
+
+.obituary-field img {
+  max-width: 10%; /* 이미지의 최대 너비를 부모 요소의 너비에 맞게 설정합니다. */
+  height: auto; /* 이미지의 비율을 유지하면서 높이를 자동으로 조정합니다. */
+}
+
+footer {
+  background-color: rgba(51, 51, 51, 0.8); /* 투명한 회색 배경 */
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/* 링크를 예쁘게 스타일링하기 위한 스타일 */
+footer a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+footer a:hover {
+  color: #ffc107; /* 마우스 호버 시 색상 변경 */
+}

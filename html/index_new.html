@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>정보 저장 페이지</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1>사용자 정보 입력</h1>
+        <form id="userInfoForm">
+            <label for="name">이름:</label>
+            <input type="text" id="name" name="name" pattern="[가-힣]{2,8}" title="이름은 2~8글자 한글만 입력 가능합니다.">
+
+
+            <label for="phone">전화번호:</label>
+            <input type="text" id="phone" name="phone" pattern="^[0-9]{11}$" title="전화번호는 12자리 숫자로 입력해주세요."><br>
+
+            <label for="relationship">가족관계:</label>
+            <select id="relationship" name="relationship">
+                <option value="배우자">배우자</option>
+                <option value="자">자</option>
+                <option value="녀">녀</option>
+                <option value="손">손</option>
+                <option value="자부">자부</option>
+                <option value="사위">빙부</option>
+            </select>
+            <br>
+
+            <label for="account">계좌번호:</label>
+            <input type="text" id="account" name="account"><br>
+
+            <label for="room">호실:</label>
+            <select id="room" name="room">
+                <option value="101">101호실</option>
+                <option value="102">102호실</option>
+                <option value="103">103호실</option>
+                <option value="104">104호실</option>
+                <option value="105">105호실</option>
+                <option value="201">201호실</option>
+                <option value="202">202호실</option>
+                <option value="203">203호실</option>
+                <option value="204">204호실</option>
+                <option value="205">205호실</option>
+            </select><br>
+
+            <button type="submit">저장</button>
+        </form>
+
+
+        <h2>호실별 사용자 정보 조회</h2>
+        <!-- 호실 번호별 버튼 -->
+        <button class="room-button" data-room="101">101호실</button>
+        <button class="room-button" data-room="201">201호실</button>
+        <!-- 추가적인 호실 버튼 필요 시 여기에 추가 -->
+
+        <h2>저장된 사용자 정보</h2>
+        <div id="userInfoDisplay"></div>
+    </div>
+
+    <div id="obituaryInfoModal" style="display:none;">
+        <form id="obituaryInfoForm">
+            <button id="closeObituaryInfoModal" type="button">X</button>
+            <label for=" obituaryName">이름:</label>
+            <input type="text" id="obituaryName" name="name"><br>
+
+            <label for="obituaryDate">날짜:</label>
+            <span id="obituaryDateText" style="display:none;"></span>
+            <input type="date" id="obituaryDateInput" name="date" style="display:none;"><br>
+            <input type="hidden" id="obituaryUserId" name="userId">
+
+            <button type="submit" id="saveObituaryInfo">정보 저장</button>
+            <button type="button" id="editObituaryInfo" style="display:none;">정보 수정</button>
+
+        </form>
+    </div>
+
+    <script src="/js/client.js"></script>
+</body>
+
+</html>

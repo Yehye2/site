@@ -1,0 +1,67 @@
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근조화환</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/sell.css">
+    </link>
+
+</head>
+
+<body class="bg-gray-100">
+    <div class="max-w-sm mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <div class="font-bold text-xl mb-2 text-center">근조화환</div>
+            <div class="flex justify-between">
+                <!-- 상품 1 -->
+                <div id="product-list" class="product-list mb-8">
+                    <h2 class="text-xl font-semibold">Products</h2>
+                    <!-- 여기에 상품 목록이 표시됩니다 -->
+                </div>
+            </div>
+            <div class="py-4">
+                <div class="font-bold mb-2">메시지 쓰기</div>
+                <textarea class="form-textarea mt-1 block w-full rounded
+        -md border-gray-300" rows="3" placeholder="Enter your message"></textarea>
+            </div>
+            <div class="py-4">
+                <form id="orderForm">
+                    <div class="font-bold mb-2">정보</div>
+                    <div class="mb-4">
+                        <select id="product" name="product"
+                            class="form-select mt-1 block w-full rounded-md border-gray-300">
+                            <!-- 옵션은 여기에 동적으로 로드됩니다 -->
+                        </select>
+                    </div>
+                    <div class="flex space-x-2">
+                        <input id="name" name="name" class="form-input mt-1 block w-1/2 rounded-md border-gray-300"
+                            type="text" placeholder="발송인 성함">
+                        <input id="phoneNumber" name="phoneNumber"
+                            class="form-input mt-1 block w-1/2 rounded-md border-gray-300" type="text"
+                            placeholder="연락 상세 연락">
+                    </div>
+                    <div class="mt-4">
+                        <input id="address" name="address"
+                            class="form-input mt-1 block w-full rounded-md border-gray-300" type="text"
+                            placeholder="수신 주소를 입력해주세요.">
+                    </div>
+            </div>
+            <div class="flex justify-center py-4">
+                <button type="button" class="bg-black text-white font-bold py-2 px-4 rounded"
+                    id="submitOrder">주문하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>회사명: ABC 주식회사 | 대표전화: 123-456-7890 | <a href="#">도움말</a></p>
+    </footer>
+</body>
+
+<script src="/js/sell.js"></script>
+
+</html>

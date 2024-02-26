@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/manage-products_new.css">
+</head>
+
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-2xl font-bold mb-8">상품관리</h1>
+
+        <h2 class="title">주문관리</h2>
+        <div id="orderDetails" class="mb-8"></div>
+
+        <!-- Modal Structure -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p id="modalText">Some text in the Modal..</p>
+            </div>
+        </div>
+
+        <!-- 상품 목록 섹션 -->
+        <h2 class="title">상품 목록</h2>
+        <div id="product-list" class="mb-8">
+
+            <!-- 여기에 상품 목록이 표시됩니다 -->
+        </div>
+
+        <!-- 새 상품 추가 섹션 -->
+        <div id="add-product" class="mb-8">
+            <h2 class="text-xl font-semibold">상품추가</h2>
+            <form id="add-product-form">
+                <input type="text" id="product-name" placeholder="상품명" class="border p-2 rounded mr-2">
+                <input type="number" id="product-price" placeholder="가격" class="border p-2 rounded mr-2">
+                <input type="text" id="product-image" placeholder="이미지주소" class="border p-2 rounded mr-2">
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded">추가하기</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/manage-products.js"></script>
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const http = require('http');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const crypto = require("crypto");
@@ -7,12 +8,23 @@ const axios = require("axios");
 const multer = require('multer');
 const upload = multer();
 const fs = require('fs');
+const WebSocket = require('ws');
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+const path = require('path');
 
 const rawConfig = fs.readFileSync('config.json');
 const config = JSON.parse(rawConfig);
 
 // MySQL 데이터베이스 연결 설정
 const db = mysql.createConnection({
+    host: config.mysql.host,
+    user: config.mysql.user,
+    password: config.mysql.password,
+    database: config.mysql.database,
+});
+
+const connection = mysql.createConnection({
     host: config.mysql.host,
     user: config.mysql.user,
     password: config.mysql.password,
@@ -26,8 +38,29 @@ db.connect((err) => {
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use('/css', express.static('css'));
+app.use('/js', express.static('js'));
+app.get('/', (req, res) => res.sendFile(__dirname + '/html/index_new.html'));
+app.get('/notice', (req, res) => res.sendFile(__dirname + '/html/obituary_notice_new.html'));
+app.get('/sell', (req, res) => res.sendFile(__dirname + '/html/sell_new.html'));
+app.get('/manage', (req, res) => res.sendFile(__dirname + '/html/manage-products_new.html'));
 app.use(express.json());
+
+wss.on('connection', function connection(ws) {
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+    });
+
+    ws.send('connected to server');
+});
+
+function broadcastChange(data) {
+    wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(data);
+        }
+    });
+}
 
 // 사용자 데이터 저장
 app.post('/saveUserData', (req, res) => {
@@ -272,18 +305,18 @@ app.post('/submit-obituary-info', (req, res) => {
 });
 
 // Route to handle adding a new product
-app.post('/add-product', (req, res) => {
-    const { name, price } = req.body;
-    const query = 'INSERT INTO products (name, price) VALUES (?, ?)';
+app.post('/add-product', function (req, res) {
+    const newProduct = req.body;
 
-    db.query(query, [name, price], (err, result) => {
-        if (err) {
-            // Handle errors
+    const query = 'INSERT INTO products (name, price, image) VALUES (?, ?, ?)';
+    connection.query(query, [newProduct.name, newProduct.price, newProduct.image], function (error, results, fields) {
+        if (error) {
             res.status(500).send('Error adding product');
-        } else {
-            // Send a success response
-            res.status(200).send('Product added successfully');
+            return;
         }
+
+        broadcastChange(JSON.stringify({ action: 'add', product: newProduct }));
+        res.status(200).send('Product added successfully');
     });
 });
 
@@ -300,18 +333,81 @@ app.get('/api/products', (req, res) => {
 });
 
 // 상품 삭제
-app.delete('/api/products/:id', (req, res) => {
+app.delete('/api/products/:id', function (req, res) {
     const productId = req.params.id;
+
     const query = 'DELETE FROM products WHERE id = ?';
-    db.query(query, [productId], (err, result) => {
-        if (err) {
-            res.status(500).json({ message: '상품 삭제 중 오류 발생' });
+    connection.query(query, [productId], function (error, results, fields) {
+        if (error) {
+            res.status(500).send('Error deleting product');
             return;
         }
-        res.status(200).json({ message: '상품 삭제 완료' });
+
+        broadcastChange(JSON.stringify({ action: 'delete', productId: productId }));
+        res.status(200).send('Product deleted successfully');
     });
 });
 
-app.listen(3000, () => {
-    console.log('서버가 3000번 포트에서 실행 중입니다.');
+//조환주문
+app.post('/order', (req, res) => {
+    const { product, name, phoneNumber, address } = req.body;
+    const query = 'INSERT INTO orders (product, name, phoneNumber, Address) VALUES (?, ?, ?, ?)';
+
+    connection.query(query, [product, name, phoneNumber, address], (error, results, fields) => {
+        if (error) throw error;
+        res.json({ message: 'Order placed successfully', orderId: results.insertId });
+    });
+});
+
+// 주문 목록 조회
+app.get('/order', (req, res) => {
+    const query = 'SELECT * FROM orders'; // 'products'는 상품 데이터를 저장하는 테이블 이름입니다.
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).json({ message: '상품 조회 중 오류 발생' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// 주문 내역 상세 조회 엔드포인트
+app.get('/order/:id', (req, res) => {
+    const orderId = req.params.id;
+    connection.query('SELECT * FROM orders WHERE Id = ?', [orderId], (error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Something failed!' });
+        } else {
+            if (results.length > 0) {
+                res.json(results[0]);
+            } else {
+                res.status(404).send({ message: 'Order not found' });
+            }
+        }
+    });
+});
+
+//주문 내역 삭제
+app.delete('/order/:id', function (req, res) {
+    const orderId = req.params.id;
+
+    const query = 'DELETE FROM orders WHERE id = ?';
+    connection.query(query, [orderId], function (error, results, fields) {
+        if (error) {
+            res.status(500).send('Error deleting product');
+            return;
+        }
+
+        broadcastChange(JSON.stringify({ action: 'delete', orderId: orderId }));
+        res.status(200).send('Product deleted successfully');
+    });
+});
+
+app.get('/end', (req, res) => {
+    // final_obituary_notice.html 파일을 응답으로 전송합니다.
+    res.sendFile(path.join(__dirname, 'html', 'end.html'));
+});
+
+app.listen(3030, () => {
+    console.log('서버가 3030번 포트에서 실행 중입니다.');
 });

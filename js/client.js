@@ -68,7 +68,7 @@ function fetchUserData(room) {
 }
 
 function obituaryButton(userId) {
-    window.location.href = 'obituary notice.html?userId=' + userId;
+    window.location.href = 'notice?userId=' + userId;
 }
 
 // room 번호별 버튼 클릭 이벤트 처리
