@@ -13,44 +13,29 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const path = require('path');
 
-// const rawConfig = fs.readFileSync('config.json');
-// const config = JSON.parse(rawConfig);
+const rawConfig = fs.readFileSync('config.json');
+const config = JSON.parse(rawConfig);
 
-
+// MySQL 데이터베이스 연결 설정
 const db = mysql.createConnection({
-    host: mysql.host,
-    user: mysql.user,
-    password: mysql.password,
-    database: mysql.database,
+    host: config.mysql.host,
+    user: config.mysql.user,
+    password: config.mysql.password,
+    database: config.mysql.database,
 });
 
 const connection = mysql.createConnection({
-    host: mysql.host,
-    user: mysql.user,
-    password: mysql.password,
-    database: mysql.database,
+    host: config.mysql.host,
+    user: config.mysql.user,
+    password: config.mysql.password,
+    database: config.mysql.database,
 });
 
-// MySQL 데이터베이스 연결 설정
-// const db = mysql.createConnection({
-//     host: config.mysql.host,
-//     user: config.mysql.user,
-//     password: config.mysql.password,
-//     database: config.mysql.database,
-// });
-
-// const connection = mysql.createConnection({
-//     host: config.mysql.host,
-//     user: config.mysql.user,
-//     password: config.mysql.password,
-//     database: config.mysql.database,
-// });
-
 // 데이터베이스 연결
-// db.connect((err) => {
-//     if (err) throw err;
-//     console.log('MySQL 데이터베이스에 연결되었습니다.');
-// });
+db.connect((err) => {
+    if (err) throw err;
+    console.log('MySQL 데이터베이스에 연결되었습니다.');
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/css', express.static('css'));
@@ -134,11 +119,9 @@ app.post('/delete-user', (req, res) => {
     });
 });
 
-// const coolsms = require("coolsms-node-sdk").default;
-// const messageService = new coolsms(config.coolsms.apikey, config.coolsms.apikey2);
-
 const coolsms = require("coolsms-node-sdk").default;
-const messageService = new coolsms(coolsms.apikey, coolsms.apikey2);
+const messageService = new coolsms(config.coolsms.apikey, config.coolsms.apikey2);
+
 // 단일 발송 예제
 app.post('/send-sms', (req, res) => {
     const { to, text } = req.body; // 요청 본문에서 전화번호와 문자 내용을 받음
