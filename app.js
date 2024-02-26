@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -13,22 +14,23 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const path = require('path');
 
-const rawConfig = fs.readFileSync('config.json');
-const config = JSON.parse(rawConfig);
+
+// const rawConfig = fs.readFileSync('config.json');
+// const config = JSON.parse(rawConfig);
 
 // MySQL 데이터베이스 연결 설정
 const db = mysql.createConnection({
-    host: config.mysql.host,
-    user: config.mysql.user,
-    password: config.mysql.password,
-    database: config.mysql.database,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 
 const connection = mysql.createConnection({
-    host: config.mysql.host,
-    user: config.mysql.user,
-    password: config.mysql.password,
-    database: config.mysql.database,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 
 // 데이터베이스 연결
@@ -120,7 +122,7 @@ app.post('/delete-user', (req, res) => {
 });
 
 const coolsms = require("coolsms-node-sdk").default;
-const messageService = new coolsms(config.coolsms.apikey, config.coolsms.apikey2);
+const messageService = new coolsms(process.env.apikey, process.env.apikey2);
 
 // 단일 발송 예제
 app.post('/send-sms', (req, res) => {
