@@ -138,7 +138,7 @@ app.post('/delete-user', (req, res) => {
 // const messageService = new coolsms(config.coolsms.apikey, config.coolsms.apikey2);
 
 const coolsms = require("coolsms-node-sdk").default;
-const messageService = new coolsms(apikey, apikey2);
+const messageService = new coolsms(oolsms.apikey, oolsms.apikey2);
 // 단일 발송 예제
 app.post('/send-sms', (req, res) => {
     const { to, text } = req.body; // 요청 본문에서 전화번호와 문자 내용을 받음
