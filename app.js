@@ -13,8 +13,8 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const path = require('path');
 
-const rawConfig = fs.readFileSync('config.json');
-const config = JSON.parse(rawConfig);
+// const rawConfig = fs.readFileSync('config.json');
+// const config = JSON.parse(rawConfig);
 
 // MySQL 데이터베이스 연결 설정
 const db = mysql.createConnection({
