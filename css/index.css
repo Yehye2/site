@@ -157,3 +157,31 @@ th {
   padding: 0 10px;
   line-height: 30px;
 }
+
+#menuBar {
+  display: flex;
+  flex-direction: column;
+  width: 150px; /* 메뉴바의 가로 크기 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgba(240, 240, 240, 0.95); /* 조금 더 불투명하게 조정 */
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2); /* 상자 그림자를 더 세련되게 조정 */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* 글꼴 변경 */
+  z-index: 1000; /* 다른 요소 위에 위치하도록 z-index 추가 */
+}
+
+#menuBar a {
+  padding: 20px;
+  text-decoration: none;
+  color: black;
+  transition: background-color 0.3s, color 0.3s; /* 부드러운 배경 및 글꼴 색상 변화를 위한 트랜지션 추가 */
+}
+
+#menuBar a:hover,
+#menuBar a:focus {
+  background-color: #adadad; /* 호버 시 배경 색상 변경 */
+  color: white; /* 호버 시 글자 색상 변경 */
+  text-decoration: none; /* 호버 시 밑줄 제거 */
+}
