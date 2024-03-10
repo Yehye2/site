@@ -41,7 +41,7 @@ function fetchUserData(room) {
             // 서버 응답의 'status'를 확인하고 'data' 배열 처리
             if (responseData.status === 'success' && Array.isArray(responseData.data)) {
                 var table = '<table>';
-                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>가족관계</th><th>문자발송</th><th>삭제</th><th>정보</th></tr>';
+                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>가족관계</th><th>문자발송</th><th>삭제</th></tr>';
                 responseData.data.forEach(function (user) {
                     table += '<tr>';
                     table += '<td>' + user.name + '</td>';
@@ -51,8 +51,6 @@ function fetchUserData(room) {
                     table += '<td>' + user.relationship + '</td>';
                     table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-userId="' + user.Id + '">문자 발송</button>';
                     table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
-                    table += '<td><button onclick="showObituaryInfoModal(' + user.Id + ')">정보</button></td>';
-                    table += '<td><button onclick="obituaryButton(' + user.Id + ')">부고장</button></td>';
                     table += '</tr>';
                 });
                 table += '</table>';
@@ -71,13 +69,47 @@ function obituaryButton(userId) {
     window.location.href = 'notice?userId=' + userId;
 }
 
+function roomObituaryButton(room) {
+    window.location.href = 'notice?room=' + room;
+}
+
+document.getElementById('notice').addEventListener('click', function () {
+    window.location.href = 'new'; // Replace with your desired URL
+});
+
 // room 번호별 버튼 클릭 이벤트 처리
 document.querySelectorAll('.room-button').forEach(button => {
     button.addEventListener('click', function () {
         var room = this.getAttribute('data-room');
+
+        // Fetch user data or perform other actions as needed
         fetchUserData(room);
+
+        // Ensure the "부고장 생성" button is managed correctly
+        manageObituaryButton(room);
     });
 });
+
+function manageObituaryButton(room) {
+    // Check for an existing button
+    let obituaryButton = document.querySelector('#obituaryButton');
+    if (!obituaryButton) {
+        obituaryButton = document.createElement('button');
+        obituaryButton.id = 'roomButton';
+        obituaryButton.textContent = '부고장';
+        document.body.appendChild(obituaryButton); // Consider appending to a specific, stable parent
+    }
+
+    // Update the button's data-room attribute and click event listener
+    obituaryButton.setAttribute('data-room', room);
+    obituaryButton.onclick = function () {
+        roomObituaryButton(room); // Ensure this function is correctly defined elsewhere
+    };
+}
+
+let tableElement = document.querySelector('#userInfoDisplay'); // 테이블의 ID로 바꾸세요
+let buttonHTML = '<button id="obituaryButton" data-room="' + room + '">부고장</button>';
+tableElement.insertAdjacentHTML('afterend', buttonHTML);
 
 document.getElementById('userInfoDisplay').addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('send-sms-button')) {

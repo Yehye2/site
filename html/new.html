@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>부고 정보 입력</title>
+    <link rel="stylesheet" href="/css/new.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="input-form">
+        <h1>부고 정보 입력</h1>
+        <form id="obituaryForm">
+            <div class="form-group">
+                <label for="obituaryName">이름:</label>
+                <input type="text" id="obituaryName" name="obituaryName" required>
+            </div>
+            <div class="form-group">
+                <label for="obituaryDateText">부고 날짜:</label>
+                <input type="date" id="obituaryDateText" name="obituaryDateText" required>
+            </div>
+            <div class="form-group">
+                <label for="room">호실:</label>
+                <input type="text" id="room" name="room" required>
+            </div>
+            <div class="form-group">
+                <label for="admission">입관 날짜:</label>
+                <input type="date" id="admission" name="admission">
+            </div>
+            <div class="form-group">
+                <label for="funeralDate">발인 날짜:</label>
+                <input type="date" id="funeralDate" name="funeralDate">
+            </div>
+            <div class="form-group">
+                <label for="burialSite">장지:</label>
+                <input type="date" id="burialDate" name="burialSite">
+            </div>
+            <div class="form-group">
+                <label for="bankAccount">유가족 통장 정보:</label>
+                <input type="text" id="bankAccount" name="bankAccount">
+            </div>
+            <div class="form-group" id="primaryMourners">
+                <label for="primaryMournerRelation1">상주 관계:</label>
+                <label for="primaryMournerName1">상주 이름:</label>
+                <input type="text" name="primaryMournerRelation[]" id="primaryMournerRelation1"
+                    placeholder="관계를 입력해주세요. 예: 아들">
+
+
+                <input type="text" name="primaryMournerName[]" id="primaryMournerName1"
+                    placeholder="이름을 입력해주세요. 예: 홍길동">
+            </div>
+            <button type="button" onclick="addMourner()">상주 추가</button>
+            <button type="submit" id="saveButton">정보 저장</button>
+        </form>
+
+    </div>
+    <div class="input-form">
+        <form>
+            <div class="form-group">
+                <label for="deleteRoom">호실 정보 삭제:</label>
+                <input type="text" id="deleteRoom" name="deleteRoom" placeholder="삭제할 호실 번호 입력">
+                <button type="button" id="deleteButton">정보 삭제</button>
+            </div>
+        </form>
+    </div>
+    <script src="/js/new.js"></script>
+</body>
+
+</html>

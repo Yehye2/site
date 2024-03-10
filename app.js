@@ -46,6 +46,7 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/html/index_new.html'));
 app.get('/notice', (req, res) => res.sendFile(__dirname + '/html/obituary_notice_new.html'));
 app.get('/sell', (req, res) => res.sendFile(__dirname + '/html/sell_new.html'));
 app.get('/manage', (req, res) => res.sendFile(__dirname + '/html/manage-products_new.html'));
+app.get('/new', (req, res) => res.sendFile(__dirname + '/html/new.html'));
 app.use(express.json());
 
 wss.on('connection', function connection(ws) {
@@ -143,7 +144,7 @@ app.post('/send-sms', (req, res) => {
 
 // Endpoint to receive and save the content
 app.post('/saveObituary', (req, res) => {
-    const { userId, admission, funeralDate, burialDate, bankAccount } = req.body;
+    const { userId, admission, funeralDate, burialDate, bankAccount, room } = req.body;
 
     // Check if userId is provided
     if (!userId) {
@@ -151,9 +152,23 @@ app.post('/saveObituary', (req, res) => {
     }
 
     // SQL query to insert the obituary content with userId
-    const query = 'INSERT INTO obituarynotice (userId, admission, funeralDate, burialDate, bankAccount) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO obituarynotice (userId, admission, funeralDate, burialDate, bankAccount) VALUES (?, ?, ?, ?, ?, ?)';
 
-    db.query(query, [userId, admission, funeralDate, burialDate, bankAccount], (error, results) => {
+    db.query(query, [userId, admission, funeralDate, burialDate, bankAccount, room], (error, results) => {
+        if (error) {
+            console.error(error);  // Log the error for debugging
+            return res.status(500).send('Error saving to database');
+        }
+        res.send('Content successfully saved');
+    });
+});
+
+app.post('/saveRoomObituary', (req, res) => {
+    const { admission, funeralDate, burialDate, bankAccount, room } = req.body;
+
+    const query = 'INSERT INTO obituarynotice (admission, funeralDate, burialDate, bankAccount, room) VALUES (?, ?, ?, ?, ?)';
+
+    db.query(query, [admission, funeralDate, burialDate, bankAccount, room], (error, results) => {
         if (error) {
             console.error(error);  // Log the error for debugging
             return res.status(500).send('Error saving to database');
@@ -192,6 +207,7 @@ app.post('/submit-obituary-notice', upload.none(), (req, res) => {
     });
 });
 
+//유저아이디로 부고장 정보 받아오기
 app.get('/getobituarynotice', (req, res) => {
     const userId = req.query.userId;
     if (!userId) {
@@ -224,6 +240,94 @@ app.get('/getobituarynotice', (req, res) => {
         });
     });
 });
+
+app.get('/getobituarynoticeByRoom', (req, res) => {
+    const room = req.query.room; // 변경된 파라미터 이름
+    if (!room) {
+        res.status(400).send('Room number is required'); // 에러 메시지 변경
+        return;
+    }
+
+    const query = 'SELECT admission, funeralDate, burialDate, bankAccount FROM obituarynotice WHERE room = ?';
+
+    db.query(query, [room], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error fetching obituary information');
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).send('Room not found'); // 에러 메시지 변경
+            return;
+        }
+
+        const obituaryInfo = results[0];
+        res.json({
+            obituary: {
+                admission: obituaryInfo.admission,
+                funeralDate: obituaryInfo.funeralDate,
+                burialDate: obituaryInfo.burialDate,
+                bankAccount: obituaryInfo.bankAccount,
+                room: obituaryInfo.room
+            }
+        });
+    });
+});
+
+app.delete('/deleteRoom', function (req, res) {
+    const room = req.body.room;
+
+    // 트랜잭션 시작
+    connection.beginTransaction(function (err) {
+        if (err) { // 트랜잭션 시작 실패
+            res.status(500).send('Transaction Start Error');
+            return;
+        }
+
+        // obituaryinfo 테이블에서 삭제
+        const queryObituaryInfo = 'DELETE FROM obituaryinfo WHERE room = ?';
+        connection.query(queryObituaryInfo, [room], function (error, results, fields) {
+            if (error) {
+                return connection.rollback(function () {
+                    res.status(500).send('Error deleting from obituaryinfo');
+                });
+            }
+
+            // cheif_mourner 테이블에서 삭제
+            const queryChiefMourner = 'DELETE FROM cheif_mourner WHERE room = ?';
+            connection.query(queryChiefMourner, [room], function (error, results, fields) {
+                if (error) {
+                    return connection.rollback(function () {
+                        res.status(500).send('Error deleting from cheif_mourner');
+                    });
+                }
+
+                // obituarynotice 테이블에서 삭제
+                const queryObituaryNotice = 'DELETE FROM obituarynotice WHERE room = ?';
+                connection.query(queryObituaryNotice, [room], function (error, results, fields) {
+                    if (error) {
+                        return connection.rollback(function () {
+                            res.status(500).send('Error deleting from obituarynotice');
+                        });
+                    }
+
+                    // 모든 삭제 작업이 성공적으로 완료되었다면, 변경사항을 확정(commit)
+                    connection.commit(function (err) {
+                        if (err) {
+                            return connection.rollback(function () {
+                                res.status(500).send('Commit failed');
+                            });
+                        }
+                        res.status(200).send('Room and related information deleted successfully');
+                    });
+                });
+            });
+        });
+    });
+});
+
+
 
 //부고장 정보 받아오기
 app.get('/get-obituary-data', (req, res) => {
@@ -273,6 +377,24 @@ app.get('/getObituaryInfo', (req, res) => {
     });
 });
 
+app.get('/getObituaryInfoByRoom', (req, res) => {
+    const room = req.query.room;
+    // userId를 사용하여 부고 정보를 조회하는 SQL 쿼리
+    const sql = 'SELECT * FROM obituaryinfo WHERE room = ?';
+    db.query(sql, [room], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ status: 'error', message: '정보 조회 실패' });
+            return;
+        }
+        if (results.length > 0) {
+            res.json({ status: 'success', obituary: results[0] });
+        } else {
+            res.json({ status: 'not found', obituary: null });
+        }
+    });
+});
+
 //부고 정보 업데이트
 app.post('/updateObituaryInfo', (req, res) => {
     const { userId, name, date } = req.body;
@@ -295,6 +417,23 @@ app.post('/submit-obituary-info', (req, res) => {
     // 데이터베이스에 저장할 쿼리를 작성합니다.
     const sql = 'INSERT INTO obituaryinfo (name, date, userId) VALUES (?, ?, ?)';
     db.query(sql, [name, date, userId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('부고 정보 저장 실패');
+            return;
+        }
+
+        // 저장 성공 응답
+        res.send('정보가 저장되었습니다.');
+    });
+});
+
+app.post('/submitroomobituaryinfo', (req, res) => {
+    const { name, date, room } = req.body;  // 클라이언트에서 전송한 이름과 날짜
+
+    // 데이터베이스에 저장할 쿼리를 작성합니다.
+    const sql = 'INSERT INTO obituaryinfo (name, date,room) VALUES (?, ?, ?)';
+    db.query(sql, [name, date, room], (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send('부고 정보 저장 실패');
@@ -402,6 +541,43 @@ app.delete('/order/:id', function (req, res) {
 
         broadcastChange(JSON.stringify({ action: 'delete', orderId: orderId }));
         res.status(200).send('Product deleted successfully');
+    });
+});
+
+// 상주 정보 저장을 위한 POST 요청 처리
+app.post('/addMourner', (req, res) => {
+    const { primaryMournerRelation, primaryMournerName, room } = req.body;
+    // SQL 쿼리에서 모든 값에 대한 플레이스홀더를 포함시킵니다.
+    const query = 'INSERT INTO cheif_mourner (relation, name, room) VALUES ?';
+
+    // 모든 주요 애도자 관계, 이름, 그리고 공통적으로 받은 방 번호를 매핑합니다.
+    const values = primaryMournerRelation.map((relation, index) => [
+        relation, primaryMournerName[index], room
+    ]);
+
+    connection.query(query, [values], (error, results, fields) => {
+        if (error) {
+            console.error(error); // 오류 메시지를 콘솔에 출력
+            return res.status(500).send('Error saving to database');
+        }
+        res.send('Mourner information saved successfully');
+    });
+});
+
+app.get('/cheif_mourner', (req, res) => {
+    const room = req.query.room;
+    const sql = 'SELECT * FROM cheif_mourner WHERE room = ?';
+    db.query(sql, [room], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ status: 'error', message: '정보 조회 실패' });
+            return;
+        }
+        if (results.length > 0) {
+            res.json(results);
+        } else {
+            res.json({ status: 'not found', obituary: null });
+        }
     });
 });
 

@@ -22,6 +22,35 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var room = params.get('room');
+
+    if (room) {
+        fetch(`/getObituaryInfoByRoom?room=${room}`)
+            .then(response => response.json())
+            .then(data => {
+                // 날짜를 년 월 일 형식으로 변환하기 전에 data.obituary가 존재하는지 확인
+                if (data.obituary?.date) {
+                    var date = new Date(data.obituary.date);
+                    var formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+
+                    // 화면에 표시
+                    document.getElementById('obituaryName').textContent = data.obituary.name;
+                    document.getElementById('obituaryDateText').textContent = formattedDate;
+                } else {
+                    // 적절한 처리나 메시지 표시
+                    console.log('날짜 정보가 없습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    } else {
+        console.log('room 파라미터가 URL에 없습니다.');
+    }
+});
+
 
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
@@ -44,6 +73,79 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('userId parameter not found in URL.');
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var room = params.get('room');
+
+    if (room) {
+        fetch(`/getobituarynoticeByRoom?room=${room}`)
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML elements with the retrieved information
+                document.getElementById('admission').textContent = data.obituary.admission;
+                document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
+                document.getElementById('burialDate').textContent = data.obituary.burialDate;
+                document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    } else {
+        // console.log('userId parameter not found in URL.');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var room = params.get('room');
+
+    if (room) {
+        fetch(`/cheif_mourner?room=${room}`) // 오타 수정: chief_mourner
+            .then(response => response.json())
+            .then(data => {
+                // 상주 정보를 담을 컨테이너
+                const mournerContainer = document.getElementById('chiefMourner');
+                // 기존 상주 정보 삭제
+                mournerContainer.innerHTML = '';
+
+                // 데이터 처리를 위한 배열 확인 및 변환
+                let mourners = Array.isArray(data) ? data : [data];
+
+                // relation에 따라 그룹화
+                const mournerGroups = mourners.reduce((acc, mourner) => {
+                    (acc[mourner.relation] = acc[mourner.relation] || []).push(mourner.name);
+                    return acc;
+                }, {});
+
+                // 그룹화된 상주 정보 동적 추가
+                Object.entries(mournerGroups).forEach(([relation, names], index) => {
+                    const mournerDiv = document.createElement('div');
+                    mournerDiv.className = 'mourner';
+                    mournerDiv.style.display = 'flex';
+                    mournerDiv.style.justifyContent = 'flex-start';
+                    mournerDiv.style.alignItems = 'center';
+                    mournerDiv.style.marginBottom = '10px';
+
+                    const relationP = document.createElement('p');
+                    relationP.textContent = `${relation}: `;
+                    relationP.style.marginRight = '10px';
+
+                    const namesP = document.createElement('p');
+                    namesP.textContent = names.join(', '); // 이름을 쉼표로 구분하여 나열
+
+                    mournerDiv.appendChild(relationP);
+                    mournerDiv.appendChild(namesP);
+
+                    mournerContainer.appendChild(mournerDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+});
+
 
 document.addEventListener('DOMContentLoaded', (event) => {
     function saveContent() {
