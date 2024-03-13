@@ -100,6 +100,7 @@ document.getElementById('saveButton').addEventListener('click', function () {
         })
         .then(data => {
             console.log(data);
+            window.location.reload();
             // 성공적으로 데이터를 전송한 후의 로직 (예: 페이지 새로고침, 사용자에게 알림 표시 등)
         })
         .catch(error => {
