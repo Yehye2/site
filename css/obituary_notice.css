@@ -13,8 +13,7 @@ body {
 
 @media only screen and (max-width: 767px) {
   body {
-    background-size: cover; /* 배경 이미지가 화면을 가득 채우도록 설정 */
-    background-attachment: scroll; /* 모바일에서 fixed 대신 scroll 사용 */
+    background-size: 100% 100%; /* 배경 이미지가 화면에 꽉 차게, 비율이 변경될 수 있음 */
   }
 }
 
