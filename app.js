@@ -43,6 +43,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/html/index_new.html'));
+app.get('/end', (req, res) => {
+    let html = fs.readFileSync(path.join(__dirname, '/html/end.html'), 'utf8');
+    html = html.replace('%MAP_API_KEY%', process.env.MAP_API_KEY);
+    res.send(html);
+});
 app.get('/notice', (req, res) => {
     let html = fs.readFileSync(path.join(__dirname, '/html/obituary_notice_new.html'), 'utf8');
     html = html.replace('%MAP_API_KEY%', process.env.MAP_API_KEY);
@@ -627,11 +632,6 @@ app.get('/cheif_mourner', (req, res) => {
             res.json({ status: 'not found', obituary: null });
         }
     });
-});
-
-app.get('/end', (req, res) => {
-    // final_obituary_notice.html 파일을 응답으로 전송합니다.
-    res.sendFile(path.join(__dirname, 'html', 'end.html'));
 });
 
 app.listen(3030, () => {
