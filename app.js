@@ -142,19 +142,31 @@ app.post('/send-sms', (req, res) => {
     });
 });
 
-// Endpoint to receive and save the content
+// app.post('/saveObituary', (req, res) => {
+//     const { random, bankAccount } = req.body;
+
+//     // Check if userId is provided
+
+//     // SQL query to insert the obituary content with userId
+//     const query = 'INSERT INTO obituarynotice (random, bankAccount) VALUES (?, ?)';
+
+//     db.query(query, [random, bankAccount], (error, results) => {
+//         if (error) {
+//             console.error(error);  // Log the error for debugging
+//             return res.status(500).send('Error saving to database');
+//         }
+//         res.send('Content successfully saved');
+//     });
+// });
+
 app.post('/saveObituary', (req, res) => {
-    const { userId, admission, funeralDate, burialDate, bankAccount, room } = req.body;
+    const { random, admission, funeralDate, burialDate, bankAccount, room } = req.body;
 
     // Check if userId is provided
-    if (!userId) {
-        return res.status(400).send('User ID is required');
-    }
-
     // SQL query to insert the obituary content with userId
-    const query = 'INSERT INTO obituarynotice (userId, admission, funeralDate, burialDate, bankAccount) VALUES (?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO obituarynotice (random, admission, funeralDate, burialDate, bankAccount) VALUES (?, ?, ?, ?, ?)';
 
-    db.query(query, [userId, admission, funeralDate, burialDate, bankAccount, room], (error, results) => {
+    db.query(query, [random, admission, funeralDate, burialDate, bankAccount, room], (error, results) => {
         if (error) {
             console.error(error);  // Log the error for debugging
             return res.status(500).send('Error saving to database');
@@ -163,6 +175,8 @@ app.post('/saveObituary', (req, res) => {
     });
 });
 
+
+//호실번호로 정보저장
 app.post('/saveRoomObituary', (req, res) => {
     const { admission, funeralDate, burialDate, bankAccount, room } = req.body;
 
@@ -270,6 +284,36 @@ app.get('/getobituarynoticeByRoom', (req, res) => {
                 burialDate: obituaryInfo.burialDate,
                 bankAccount: obituaryInfo.bankAccount,
                 room: obituaryInfo.room
+            }
+        });
+    });
+});
+
+app.get('/getobituarynoticeByRandom', (req, res) => {
+    const random = req.query.random; // 변경된 파라미터 이름
+    if (!random) {
+        res.status(400).send('Room number is required'); // 에러 메시지 변경
+        return;
+    }
+
+    const query = 'SELECT bankAccount FROM obituarynotice WHERE random = ?';
+
+    db.query(query, [random], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error fetching obituary information');
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).send('Room not found'); // 에러 메시지 변경
+            return;
+        }
+
+        const obituaryInfo = results[0];
+        res.json({
+            obituary: {
+                bankAccount: obituaryInfo.bankAccount
             }
         });
     });

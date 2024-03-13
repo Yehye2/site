@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
-    var userId = params.get('userId');
+    var room = params.get('room');
 
-    if (userId) {
-        fetch(`/getObituaryInfo?userId=${userId}`)
+    if (room) {
+        fetch(`/getObituaryInfoByRoom?room=${room}`)
             .then(response => response.json())
             .then(data => {
                 // 날짜를 년 월 일 형식으로 변환
@@ -25,16 +25,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
-    var userId = params.get('userId');
+    var room = params.get('room');
 
-    if (userId) {
-        fetch(`/getobituarynotice?userId=${userId}`)
+    if (room) {
+        fetch(`/getobituarynoticeByRoom?room=${room}`)
             .then(response => response.json())
             .then(data => {
                 // Update the HTML elements with the retrieved information
                 document.getElementById('admission').textContent = data.obituary.admission;
                 document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
                 document.getElementById('burialDate').textContent = data.obituary.burialDate;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    } else {
+        console.log('userId parameter not found in URL.');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var random = params.get('random');
+
+    if (random) {
+        fetch(`/getobituarynoticeByRandom?random=${random}`)
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML elements with the retrieved information
                 document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
             })
             .catch(error => {
@@ -105,6 +123,58 @@ document.addEventListener('DOMContentLoaded', (event) => {
         console.error('Save button does not exist in the DOM.');
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var room = params.get('room');
+
+    if (room) {
+        fetch(`/cheif_mourner?room=${room}`) // 오타 수정: chief_mourner
+            .then(response => response.json())
+            .then(data => {
+                // 상주 정보를 담을 컨테이너
+                const mournerContainer = document.getElementById('chiefMourner');
+                // 기존 상주 정보 삭제
+                mournerContainer.innerHTML = '';
+
+                // 데이터 처리를 위한 배열 확인 및 변환
+                let mourners = Array.isArray(data) ? data : [data];
+
+                // relation에 따라 그룹화
+                const mournerGroups = mourners.reduce((acc, mourner) => {
+                    (acc[mourner.relation] = acc[mourner.relation] || []).push(mourner.name);
+                    return acc;
+                }, {});
+
+                // 그룹화된 상주 정보 동적 추가
+                Object.entries(mournerGroups).forEach(([relation, names], index) => {
+                    const mournerDiv = document.createElement('div');
+                    mournerDiv.className = 'mourner';
+                    mournerDiv.style.display = 'flex';
+                    mournerDiv.style.justifyContent = 'flex-start';
+                    mournerDiv.style.alignItems = 'center';
+                    mournerDiv.style.marginBottom = '10px';
+
+                    const relationP = document.createElement('p');
+                    relationP.textContent = `${relation}: `;
+                    relationP.style.marginRight = '10px';
+
+                    const namesP = document.createElement('p');
+                    namesP.textContent = names.join(', '); // 이름을 쉼표로 구분하여 나열
+
+                    mournerDiv.appendChild(relationP);
+                    mournerDiv.appendChild(namesP);
+
+                    mournerContainer.appendChild(mournerDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+});
+
+
 
 function submitCondolence() {
 

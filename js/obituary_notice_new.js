@@ -154,21 +154,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const burialDateElem = document.getElementById('burialDate');
         const bankAccountElem = document.getElementById('bankAccount');
 
-        // Retrieve the user ID from URL parameters
-        const params = new URLSearchParams(window.location.search);
-        const userId = params.get('userId');
-
-        // Log if any elements or the userId are missing
+        // Log if any elements are missing
         if (!admissionElem) console.error('Admission element is missing');
         if (!funeralDateElem) console.error('Funeral Date element is missing');
         if (!burialDateElem) console.error('Burial Date element is missing');
         if (!bankAccountElem) console.error('Bank Account element is missing');
-        if (!userId) console.error('User ID is missing');
 
-        // Only proceed if all elements and the userId are present
-        if (admissionElem && funeralDateElem && burialDateElem && bankAccountElem && userId) {
+        // Generate a 4-digit random number
+        const random = Math.floor(1000 + Math.random() * 9000).toString();
+        localStorage.setItem('random', random);
+
+        // Only proceed if all elements are present
+        if (admissionElem && funeralDateElem && burialDateElem && bankAccountElem) {
             const contentData = {
-                userId: userId,
+                random: random, // Use the generated random number
                 admission: admissionElem.innerText,
                 funeralDate: funeralDateElem.innerText,
                 burialDate: burialDateElem.innerText,
@@ -208,6 +207,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 });
 
+
 function getUserId() {
     // 현재 페이지의 URL을 가져옵니다.
     var url = window.location.href;
@@ -231,10 +231,18 @@ function getUserId() {
     return userId;
 }
 
-function submitCondolence(userId) {
+function submitCondolence() {
+    // Retrieve the random value from localStorage
+    const random = localStorage.getItem('random');
+    // Retrieve the room value from the URL
+    const params = new URLSearchParams(window.location.search);
+    const room = params.get('room');
 
-    // Redirect to a new page or display a message indicating that editing is no longer possible
-    // For example:
-    window.location.href = '/end?userId=' + userId;
+    if (random && room) {
+        // Redirect to a new page using the room and random values
+        window.location.href = '/end?room=' + room + '&random=' + random;
+    } else {
+        // Handle the case where either the random or room value is missing
+        console.error('Random or Room value is missing');
+    }
 }
-
