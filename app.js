@@ -51,7 +51,6 @@ app.get('/notice', (req, res) => {
 app.get('/sell', (req, res) => res.sendFile(__dirname + '/html/sell_new.html'));
 app.get('/manage', (req, res) => res.sendFile(__dirname + '/html/manage-products_new.html'));
 app.get('/new', (req, res) => res.sendFile(__dirname + '/html/new.html'));
-app.get('/test', (req, res) => res.sendFile(__dirname + '/html/test.html'));
 app.use(express.json());
 
 wss.on('connection', function connection(ws) {
