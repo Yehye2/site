@@ -246,3 +246,12 @@ function submitCondolence() {
         console.error('Random or Room value is missing');
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    var mapOptions = {
+        center: new naver.maps.LatLng(34.802127781, 126.413207992165),
+        zoom: 17
+    };
+
+    var map = new naver.maps.Map('map', mapOptions);
+});

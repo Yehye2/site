@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/obituary_notice.css">
+    <script type="text/javascript"
+        src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=%MAP_API_KEY%"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>부고장 알림</title>
 
@@ -34,8 +36,7 @@
                 </div>
                 <div class="obituary-field">
                     <h3>장례식장 위치</h3>
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzKgwdgfCqDDZJvjqiFG1CxeZft0cdI7XFoIPf4OGHkQ&s"
-                        alt="장례식장 지도 이미지">
+                    <div id="map" style="width:50%;height:200px;"></div>
                 </div>
                 <div class="obituary-field">
                     <h3>상주</h3>
