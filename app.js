@@ -43,7 +43,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/html/index_new.html'));
-app.get('/notice', (req, res) => res.sendFile(__dirname + '/html/obituary_notice_new.html'));
+app.get('/notice', (req, res) => {
+    let html = fs.readFileSync(path.join(__dirname, '/html/obituary_notice_new.html'), 'utf8');
+    html = html.replace('%MAP_API_KEY%', process.env.MAP_API_KEY);
+    res.send(html);
+});
 app.get('/sell', (req, res) => res.sendFile(__dirname + '/html/sell_new.html'));
 app.get('/manage', (req, res) => res.sendFile(__dirname + '/html/manage-products_new.html'));
 app.get('/new', (req, res) => res.sendFile(__dirname + '/html/new.html'));
