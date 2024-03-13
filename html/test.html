@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Naver Geocode API Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <h1>Naver Geocode API Test</h1>
+    <form id="geocodeForm">
+        <label for="addressInput">주소 입력: </label>
+        <input type="text" id="addressInput" name="address" placeholder="분당구 불정로 6">
+        <button type="submit">조회</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        $(document).ready(function () {
+            $('#geocodeForm').submit(function (e) {
+                e.preventDefault();
+                var address = $('#addressInput').val();
+                $.ajax({
+                    url: 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode',
+                    type: 'GET',
+                    data: {
+                        query: address,
+                        // coordinate: "127.1054328,37.3595963" // 필요한 경우 사용
+                    },
+                    headers: {
+                        "X-NCP-APIGW-API-KEY-ID": "4x8aovovl2",
+                        "X-NCP-APIGW-API-KEY": "XzT3MyGCZ4hR0OFqzSmzAhK1Tfi8OqvpSajb1RCL"
+                    },
+                    success: function (response) {
+                        $('#result').html(JSON.stringify(response));
+                    },
+                    error: function (xhr, status, error) {
+                        $('#result').html("Error: " + status + " - " + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
