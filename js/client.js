@@ -49,7 +49,7 @@ function fetchUserData(room) {
                     table += '<td>' + user.account + '</td>';
                     table += '<td>' + user.room + '</td>';
                     table += '<td>' + user.relationship + '</td>';
-                    table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-userId="' + user.Id + '">문자 발송</button>';
+                    table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-room="' + room + '">문자 발송</button>';
                     table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
                     table += '</tr>';
                 });
@@ -114,13 +114,13 @@ tableElement.insertAdjacentHTML('afterend', buttonHTML);
 document.getElementById('userInfoDisplay').addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('send-sms-button')) {
         var phoneNumber = e.target.getAttribute('data-phone');
-        var userId = e.target.getAttribute('data-userId');
+        var userId = e.target.getAttribute('data-room');
         sendMessage(phoneNumber, userId);
     }
 });
 
-function sendMessage(phoneNumber, userId) {
-    var message = "http://192.168.219.110:5500/public/obituary%20notice.html?userId=" + userId; // 보낼 메시지 내용
+function sendMessage(phoneNumber, room) {
+    var message = "https://port-0-site-am952nlt31opz6.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
 
     axios.post('/send-sms', { to: phoneNumber, text: message })
         .then(response => {

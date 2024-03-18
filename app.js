@@ -8,10 +8,13 @@ const crypto = require("crypto");
 const axios = require("axios");
 const multer = require('multer');
 const upload = multer();
+const aws = require('aws-sdk');
+const multerS3 = require('multer-s3');
 const fs = require('fs');
 const WebSocket = require('ws');
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+// const s3 = new aws.S3();
 const path = require('path');
 
 
@@ -56,6 +59,7 @@ app.get('/notice', (req, res) => {
 app.get('/sell', (req, res) => res.sendFile(__dirname + '/html/sell_new.html'));
 app.get('/manage', (req, res) => res.sendFile(__dirname + '/html/manage-products_new.html'));
 app.get('/new', (req, res) => res.sendFile(__dirname + '/html/new.html'));
+app.get('/test2', (req, res) => res.sendFile(__dirname + '/html/test2.html'));
 app.use(express.json());
 
 wss.on('connection', function connection(ws) {
@@ -73,6 +77,50 @@ function broadcastChange(data) {
         }
     });
 }
+
+const { S3 } = require('@aws-sdk/client-s3');
+const s3 = new S3({
+    region: 'us-west-2',
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
+});
+
+aws.config.update({
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // AWS 비밀 접근 키
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, // AWS 접근 키 ID
+    region: 'us-west-2' // 예: 'us-west-2'
+});
+
+// 이미지를 저장할 디렉토리 설정
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'image/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+});
+
+const multerUpload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'yehye',
+        metadata: function (req, file, cb) {
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString())
+        }
+    })
+});
+
+
+
+app.post('/upload', multerUpload.single('image'), (req, res) => {
+    res.send('이미지가 성공적으로 업로드 되었습니다.');
+});
 
 // 사용자 데이터 저장
 app.post('/saveUserData', (req, res) => {
@@ -151,22 +199,6 @@ app.post('/send-sms', (req, res) => {
     });
 });
 
-// app.post('/saveObituary', (req, res) => {
-//     const { random, bankAccount } = req.body;
-
-//     // Check if userId is provided
-
-//     // SQL query to insert the obituary content with userId
-//     const query = 'INSERT INTO obituarynotice (random, bankAccount) VALUES (?, ?)';
-
-//     db.query(query, [random, bankAccount], (error, results) => {
-//         if (error) {
-//             console.error(error);  // Log the error for debugging
-//             return res.status(500).send('Error saving to database');
-//         }
-//         res.send('Content successfully saved');
-//     });
-// });
 
 app.post('/saveObituary', (req, res) => {
     const { random, admission, funeralDate, burialDate, bankAccount, room } = req.body;

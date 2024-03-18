@@ -191,3 +191,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var map = new naver.maps.Map('map', mapOptions);
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    // 공유하기 버튼 클릭 이벤트 리스너 추가
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) {
+        shareButton.addEventListener('click', function () {
+            if (navigator.share) {
+                navigator.share({
+                    title: '부고장 알림',
+                    text: '부고장을 공유합니다.',
+                    url: window.location.href
+                }).then(() => {
+                    console.log('공유 성공');
+                }).catch((error) => {
+                    console.error('공유 실패:', error);
+                });
+            } else {
+                // Web Share API를 지원하지 않는 경우
+                alert('이 브라우저에서는 공유하기 기능을 지원하지 않습니다.');
+            }
+        });
+    }
