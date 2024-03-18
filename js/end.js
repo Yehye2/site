@@ -214,3 +214,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+Kakao.init(process.env.KAKAO_API_KEY);
+
+Kakao.Link.createDefaultButton({
+    container: '#shareButton', // 공유 버튼의 ID
+    objectType: 'feed',
+    content: {
+        title: '부고장 알림',
+        description: '부고장을 공유합니다.',
+        imageUrl: 'IMAGE_URL', // 공유할 이미지의 URL
+        link: {
+            mobileWebUrl: window.location.href,
+            webUrl: window.location.href
+        }
+    }
+});
