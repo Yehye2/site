@@ -199,6 +199,19 @@ app.post('/send-sms', (req, res) => {
     });
 });
 
+// 카카오톡 단일 발송
+app.post('/send-kakao', (req, res) => {
+    const { to, text } = req.body;
+
+    messageService.sendOne({
+        to: to,
+        from: "01050422652",
+        text: text,
+        kakaoOptions: {
+            pfId: "연동한 비즈니스 채널의 pfId"
+        }
+    }).then(res => console.log(res));
+});
 
 app.post('/saveObituary', (req, res) => {
     const { random, admission, funeralDate, burialDate, bankAccount, room } = req.body;

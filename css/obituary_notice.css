@@ -118,3 +118,16 @@ footer a {
 footer a:hover {
   color: #ffc107; /* 마우스 호버 시 색상 변경 */
 }
+
+#copyAddressButton {
+  background-color: #000;
+  color: white;
+  padding: 8px 16px; /* 안쪽 여백 조절 */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px; /* 글자 크기 조절 */
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px; /* 모서리 둥글게 */
+}

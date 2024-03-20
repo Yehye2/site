@@ -41,7 +41,7 @@ function fetchUserData(room) {
             // 서버 응답의 'status'를 확인하고 'data' 배열 처리
             if (responseData.status === 'success' && Array.isArray(responseData.data)) {
                 var table = '<table>';
-                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>가족관계</th><th>문자발송</th><th>삭제</th></tr>';
+                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>가족관계</th><th>문자발송</th><th>카카오톡</th><th>삭제</th></tr>';
                 responseData.data.forEach(function (user) {
                     table += '<tr>';
                     table += '<td>' + user.name + '</td>';
@@ -50,6 +50,7 @@ function fetchUserData(room) {
                     table += '<td>' + user.room + '</td>';
                     table += '<td>' + user.relationship + '</td>';
                     table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-room="' + room + '">문자 발송</button>';
+                    table += '<td><button class="send-kakao-button" data-phone="' + user.phone + '" data-room="' + room + '">알림톡 발송</button>';
                     table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
                     table += '</tr>';
                 });
@@ -119,6 +120,14 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
     }
 });
 
+document.getElementById('userInfoDisplay').addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('send-kakao-button')) {
+        var phoneNumber = e.target.getAttribute('data-phone');
+        var userId = e.target.getAttribute('data-room');
+        sendKakao(phoneNumber, userId);
+    }
+});
+
 function sendMessage(phoneNumber, room) {
     var message = "https://port-0-site-am952nlt31opz6.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
 
@@ -133,6 +142,23 @@ function sendMessage(phoneNumber, room) {
         .catch(error => {
             console.error(error);
             alert('문자 발송 중 오류가 발생했습니다.');
+        });
+}
+
+function sendKakao(phoneNumber, room) {
+    var message = "https://port-0-site-am952nlt31opz6.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
+
+    axios.post('/send-kakao', { to: phoneNumber, text: message })
+        .then(response => {
+            if (response.data.status === 'success') {
+                alert('알림톡이 발송되었습니다.');
+            } else {
+                alert('알림톡 발송 실패');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('알림톡 발송 중 오류가 발생했습니다.');
         });
 }
 

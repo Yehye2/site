@@ -22,7 +22,7 @@ function addMourner() {
     container.appendChild(newNameInput);
 }
 
-document.getElementById('saveButton').addEventListener('click', function () {
+document.getElementById('saveButton').addEventListener('click', function (event) {
     event.preventDefault();
 
     const primaryMournerRelations = document.querySelectorAll('[name="primaryMournerRelation[]"]');
@@ -43,65 +43,50 @@ document.getElementById('saveButton').addEventListener('click', function () {
 
 
     // Data for /submit-obituary-info endpoint
-    fetch('/submitroomobituaryinfo', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            name: obituaryName,
-            date: obituaryDateText,
-            room: room
+    const fetchPromises = [
+        fetch('/submitroomobituaryinfo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: obituaryName,
+                date: obituaryDateText,
+                room: room
+            })
+        }),
+        fetch('/saveRoomObituary', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                admission: admission,
+                funeralDate: funeralDate,
+                burialDate: burialDate,
+                bankAccount: bankAccount,
+                room: room,
+            })
+        }),
+        fetch('/addMourner', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                primaryMournerRelation: mournerData.map(data => data.relation),
+                primaryMournerName: mournerData.map(data => data.name),
+                room: room
+            })
         })
-    })
-        .then(response => response.text())
-        .then(data => console.log(data))
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+    ];
 
-    // Assume other variables (admission, funeralDate, etc.) are gathered similarly
-    // Data for /saveRoomObituary endpoint
-    fetch('/saveRoomObituary', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            admission: admission, // This needs to be defined
-            funeralDate: funeralDate, // This needs to be defined
-            burialDate: burialDate, // This needs to be defined
-            bankAccount: bankAccount, // This needs to be defined
-            room: room, // This needs to be defined
-        })
-    })
-        .then(response => response.text())
-        .then(data => console.log(data))
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-
-    fetch('/addMourner', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            primaryMournerRelation: mournerData.map(data => data.relation),
-            primaryMournerName: mournerData.map(data => data.name),
-            room: room // room 변수를 여기에 추가합니다.
-        })
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // 응답을 JSON으로 파싱합니다.
-        })
+    Promise.all(fetchPromises)
+        .then(responses => Promise.all(responses.map(r => r.text()))) // JSON 대신 text로 처리
         .then(data => {
-            console.log(data);
-            window.location.reload();
-            // 성공적으로 데이터를 전송한 후의 로직 (예: 페이지 새로고침, 사용자에게 알림 표시 등)
+            console.log(data); // 모든 데이터 로깅
+            alert('모든 정보가 성공적으로 저장되었습니다.'); // 사용자에게 알림
+            window.location.reload(); // 페이지 새로고침
         })
         .catch(error => {
             console.error('Error:', error);

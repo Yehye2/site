@@ -215,6 +215,29 @@ document.addEventListener('DOMContentLoaded', function () {
 //     }
 // });
 
+document.getElementById('copyAddressButton').addEventListener('click', function () {
+    // 텍스트 요소에서 주소 가져오기
+    var addressText = document.getElementById('funeral').innerText;
+
+    // 임시 textarea 요소 생성
+    var textarea = document.createElement('textarea');
+    textarea.value = addressText;
+    textarea.setAttribute('readonly', ''); // 읽기 전용으로 설정하여 사용자가 수정할 수 없도록 함
+    textarea.style.position = 'absolute';
+    textarea.style.left = '-9999px'; // 화면 밖으로 위치시킴
+    document.body.appendChild(textarea);
+
+    // 텍스트 선택 및 복사
+    textarea.select();
+    document.execCommand('copy');
+
+    // 임시 요소 제거
+    document.body.removeChild(textarea);
+
+    // 사용자에게 복사가 완료되었음을 알리는 메시지 표시
+    alert('주소가 복사되었습니다: ' + addressText);
+});
+
 Kakao.init(process.env.KAKAO_API_KEY);
 
 Kakao.Link.createDefaultButton({

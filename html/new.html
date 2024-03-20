@@ -22,7 +22,14 @@
             </div>
             <div class="form-group">
                 <label for="room">호실:</label>
-                <input type="text" id="room" name="room" required>
+                <select id="room" name="room">
+                    <option value="101">101호실</option>
+                    <option value="201">201호실</option>
+                    <option value="301">301호실</option>
+                    <option value="401">401호실</option>
+                    <option value="402">402호실</option>
+                    <option value="501">501호실</option>
+                </select><br>
             </div>
             <div class="form-group">
                 <label for="admission">입관 날짜:</label>
@@ -59,7 +66,14 @@
         <form>
             <div class="form-group">
                 <label for="deleteRoom">호실 정보 삭제:</label>
-                <input type="text" id="deleteRoom" name="deleteRoom" placeholder="삭제할 호실 번호 입력">
+                <select id="deleteRoom" name="room">
+                    <option value="101">101호실</option>
+                    <option value="201">201호실</option>
+                    <option value="301">301호실</option>
+                    <option value="401">401호실</option>
+                    <option value="402">402호실</option>
+                    <option value="501">501호실</option>
+                </select><br>
                 <button type="button" id="deleteButton">정보 삭제</button>
             </div>
         </form>

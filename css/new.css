@@ -66,3 +66,12 @@ button[type="submit"]:hover {
     padding: 15px;
   }
 }
+
+select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
