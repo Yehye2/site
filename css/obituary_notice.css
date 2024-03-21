@@ -5,9 +5,8 @@ body {
     no-repeat center center;
   background-size: cover;
   /* 데스크톱과 대형 화면에 적합 */
-  background-attachment: scroll;
+  background-attachment: local;
   /* 모바일 호환성을 위해 scroll로 설정 */
-  background-attachment: fixed;
   /* 배경 이미지가 스크롤될 때 고정되어 있도록 설정 */
 }
 
