@@ -131,3 +131,19 @@ footer a:hover {
   cursor: pointer;
   border-radius: 8px; /* 모서리 둥글게 */
 }
+
+h1 {
+  font-size: 32px; /* 제목 크기 증가 */
+}
+
+h2 {
+  font-size: 28px;
+}
+
+h3 {
+  font-size: 24px;
+}
+
+p {
+  font-size: 18px; /* 단락 글자 크기 증가 */
+}
