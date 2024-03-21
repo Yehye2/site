@@ -12,7 +12,8 @@ body {
 
 @media only screen and (max-width: 769px) {
   body {
-    background-size: 100% 100%; /* 배경 이미지가 화면에 꽉 차게, 비율이 변경될 수 있음 */
+    background-attachment: fixed; /* 이 설정은 배경 이미지가 스크롤에 따라 움직이지 않도록 합니다 */
+    background-size: cover; /* 화면에 맞게 이미지를 크기 조절, 비율은 유지 */
   }
 }
 
