@@ -3,14 +3,14 @@ body {
   /* 뷰포트의 전체 높이 */
   background: url("https://yehye.s3.ap-northeast-2.amazonaws.com/DALL%C2%B7E+2024-01-06+21.52.51+-+A+serene+and+respectful+background+image+featuring+chrysanthemums%2C+often+used+in+Korean+funeral+ceremonies.+The+image+should+have+a+subdued+and+elegan.png")
     no-repeat center center;
-  background-size: contain;
+  background-size: cover;
   /* 데스크톱과 대형 화면에 적합 */
   background-attachment: local;
   /* 모바일 호환성을 위해 scroll로 설정 */
   /* 배경 이미지가 스크롤될 때 고정되어 있도록 설정 */
 }
 
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 769px) {
   body {
     background-size: 100% 100%; /* 배경 이미지가 화면에 꽉 차게, 비율이 변경될 수 있음 */
   }
