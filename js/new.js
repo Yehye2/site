@@ -10,6 +10,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var room = params.get('room');
+
+    if (room) {
+        // URL의 room 매개변수 값에 따라 해당하는 option 요소를 선택
+        var roomSelect = document.getElementById('room');
+        var deleteRoomInput = document.getElementById('deleteRoom');
+        var roomOptions = roomSelect.options;
+
+        for (var i = 0; i < roomOptions.length; i++) {
+            if (roomOptions[i].value === room) {
+                roomOptions[i].selected = true;
+                deleteRoomInput.value = room; // deleteRoom에도 room 값을 설정
+                break;
+            }
+        }
+    } else {
+        console.log('room 파라미터가 URL에 없습니다.');
+    }
+
+    // 서버에서 데이터를 가져오고 HTML 폼에 데이터를 채우는 함수 호출
+    fetchDataAndPopulateForm(room);
+});
 // 서버에서 데이터를 가져와서 HTML 폼에 데이터를 채우는 함수
 function fetchDataAndPopulateForm(room) {
     // 첫 번째 fetch 함수

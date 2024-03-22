@@ -147,3 +147,21 @@ h3 {
 p {
   font-size: 18px; /* 단락 글자 크기 증가 */
 }
+
+p {
+  background-color: rgba(240, 240, 240, 0.8); /* 흰색 계열의 반투명한 배경색 */
+  padding: 10px; /* 내부 여백 추가 */
+  border-radius: 10px; /* 모서리 둥글게 */
+}
+
+#chiefMourner {
+  background-color: rgba(240, 240, 240, 0.8); /* 흰색 계열의 반투명한 배경색 */
+  padding: 10px; /* 내부 여백 추가 */
+  border-radius: 10px; /* 모서리 둥글게 */
+}
+
+#chiefMourner p {
+  background-color: transparent; /* p 요소의 배경색을 투명하게 설정 */
+  padding: 0; /* p 요소의 내부 여백을 없앰 */
+  border-radius: 0; /* p 요소의 모서리를 직각으로 설정 */
+}

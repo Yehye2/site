@@ -18,69 +18,70 @@
             <!-- 공유 아이콘 -->
             <!-- 세 개의 점 메뉴 아이콘 -->
         </div>
+        <div id="all">
+            <div class="content">
+                <h1>訃告</h1>
 
-        <div class="content">
-            <h1>訃告</h1>
 
+                <p id="obituaryName">홍길동</p>
+                <p id="obituaryDateText">2021년 10월 1일</p>
+            </div>
 
-            <p id="obituaryName">홍길동</p>
-            <p id="obituaryDateText">2021년 10월 1일</p>
-        </div>
-
-        <div class="content">
-            <div class="obituary-section">
-                <h2>추가 정보</h2>
-                <div class="obituary-field">
-                    <h3>장례식장</h3>
-                    <p id="funeral">장례식장 이름, 주소</p>
-                </div>
-                <div class="obituary-field">
-                    <h3>장례식장 위치</h3>
-                    <div id="map" style="width:50%;height:200px;"></div>
-                </div>
-                <div class="obituary-field">
-                    <h3>상주</h3>
-                    <div id="chiefMourner" style="display: flex; flex-direction: column;">
-                        <!-- 예시 데이터, 실제 데이터로 대체 필요 -->
-                        <div class="mourner"
-                            style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 10px;">
-                            <p id="relation1" style="margin-right: 10px;">아들</p>
-                            <p id="name1">홍길동</p>
-                        </div>
-                        <div class="mourner"
-                            style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 10px;">
-                            <p id="relation2" style="margin-right: 10px;">딸</p>
-                            <p id="name2">홍길순</p>
-                        </div>
-                        <!-- 더 많은 상주 정보를 추가할 수 있습니다. -->
+            <div class="content">
+                <div class="obituary-section">
+                    <h2>추가 정보</h2>
+                    <div class="obituary-field">
+                        <h3>장례식장</h3>
+                        <p id="funeral">장례식장 이름, 주소</p>
                     </div>
-                </div>
-                <div class="obituary-field">
-                    <h3>입관</h3>
-                    <p id="admission">2024년 1월 20일부터</p>
-                </div>
-                <div class="obituary-field">
-                    <h3>발인</h3>
-                    <p id="funeralDate">2024년 1월 21일 오후 2시</p>
-                </div>
-                <div class="obituary-field">
-                    <h3>장지</h3>
-                    <p id="burialDate">2024년 1월 21일 오후 3시, 묘지 이름</p>
-                </div>
-                <div class="obituary-field">
-                    <h3>유가족 통장</h3>
-                    <p id="bankAccount" contenteditable="true">은행명: XXXXX, 계좌번호: XXXXXXXXXX</p>
+                    <div class="obituary-field">
+                        <h3>장례식장 위치</h3>
+                        <div id="map" style="width:50%;height:200px;"></div>
+                    </div>
+                    <div class="obituary-field">
+                        <h3>상주</h3>
+                        <div id="chiefMourner" style="display: flex; flex-direction: column;">
+                            <!-- 예시 데이터, 실제 데이터로 대체 필요 -->
+                            <div class="mourner"
+                                style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 10px;">
+                                <p id="relation1" style="margin-right: 10px;">아들</p>
+                                <p id="name1">홍길동</p>
+                            </div>
+                            <div class="mourner"
+                                style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 10px;">
+                                <p id="relation2" style="margin-right: 10px;">딸</p>
+                                <p id="name2">홍길순</p>
+                            </div>
+                            <!-- 더 많은 상주 정보를 추가할 수 있습니다. -->
+                        </div>
+                    </div>
+                    <div class="obituary-field">
+                        <h3>입관</h3>
+                        <p id="admission">2024년 1월 20일부터</p>
+                    </div>
+                    <div class="obituary-field">
+                        <h3>발인</h3>
+                        <p id="funeralDate">2024년 1월 21일 오후 2시</p>
+                    </div>
+                    <div class="obituary-field">
+                        <h3>장지</h3>
+                        <p id="burialDate">2024년 1월 21일 오후 3시, 묘지 이름</p>
+                    </div>
+                    <div class="obituary-field">
+                        <h3>유가족 통장</h3>
+                        <p id="bankAccount" contenteditable="true">은행명: XXXXX, 계좌번호: XXXXXXXXXX</p>
 
-                    <button id="saveButton">Save Changes</button>
+                        <button id="saveButton">Save Changes</button>
+                    </div>
+
+                    <div class="footer">
+                        <button type="button" class="btn" onclick="window.location.href='sell'">근조화환 주문</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="submitCondolence(getUserId())">작성완료</button>
+
+                    </div>
+
                 </div>
-
-                <div class="footer">
-                    <button type="button" class="btn" onclick="window.location.href='sell'">근조화환 주문</button>
-                    <button type="button" class="btn btn-secondary"
-                        onclick="submitCondolence(getUserId())">작성완료</button>
-
-                </div>
-
             </div>
         </div>
         <!-- <footer>

@@ -74,17 +74,27 @@ function roomObituaryButton(room) {
     window.location.href = 'notice?room=' + room;
 }
 
-document.getElementById('notice').addEventListener('click', function () {
-    window.location.href = 'new'; // Replace with your desired URL
-});
-
-// room 번호별 버튼 클릭 이벤트 처리
-document.querySelectorAll('.room-button').forEach(button => {
+document.querySelectorAll('.room-button, #notice').forEach(button => {
     button.addEventListener('click', function () {
         var room = this.getAttribute('data-room');
 
+        // notice 버튼의 경우 room 번호가 없으므로 기본값 설정
+        if (!room) {
+            room = 'defaultRoom'; // 기본 룸 번호 또는 필요한 로직으로 설정
+            this.setAttribute('data-room', room);
+        }
+
+        // notice 버튼 클릭 시 URL 변경
+        if (this.id === 'notice') {
+            window.location.href = 'new?room=' + room;
+            return; // 함수 실행을 여기서 종료
+        }
+
         // Fetch user data or perform other actions as needed
-        fetchUserData(room);
+        // notice 버튼에 대해서는 fetchUserData 호출이 적절하지 않을 수 있으므로 조건문 추가
+        if (this.id !== 'notice') {
+            fetchUserData(room);
+        }
 
         // Ensure the "부고장 생성" button is managed correctly
         manageObituaryButton(room);
@@ -96,16 +106,22 @@ function manageObituaryButton(room) {
     let obituaryButton = document.querySelector('#obituaryButton');
     if (!obituaryButton) {
         obituaryButton = document.createElement('button');
-        obituaryButton.id = 'roomButton';
-        obituaryButton.textContent = '부고장';
-        document.body.appendChild(obituaryButton); // Consider appending to a specific, stable parent
+        obituaryButton.id = 'roomButton'; // 버튼의 ID를 'obituaryButton'으로 변경하는 것이 더 적절할 수 있습니다.
+        obituaryButton.textContent = '부고장 생성';
+        document.body.appendChild(obituaryButton);
     }
 
     // Update the button's data-room attribute and click event listener
     obituaryButton.setAttribute('data-room', room);
     obituaryButton.onclick = function () {
-        roomObituaryButton(room); // Ensure this function is correctly defined elsewhere
+        roomObituaryButton(room);
     };
+
+    // Additionally, update the #notice button's data-room attribute
+    let noticeButton = document.getElementById('notice');
+    if (noticeButton) {
+        noticeButton.setAttribute('data-room', room);
+    }
 }
 
 let tableElement = document.querySelector('#userInfoDisplay'); // 테이블의 ID로 바꾸세요
