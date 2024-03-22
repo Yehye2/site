@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var room = params.get('room');
 
     if (room) {
-        fetch(`/cheif_mourner?room=${room}`) // 오타 수정: chief_mourner
+        fetch(`/cheif_mourner?room=${room}`)
             .then(response => response.json())
             .then(data => {
                 // 상주 정보를 담을 컨테이너

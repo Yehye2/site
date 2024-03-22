@@ -679,6 +679,83 @@ app.get('/cheif_mourner', (req, res) => {
     });
 });
 
+// '/updateObituaryInfo' 엔드포인트에 대한 PATCH 요청 핸들러
+app.patch('/updateObituaryInfo', (req, res) => {
+    const { name, date, room } = req.body;
+    const sql = "UPDATE obituaryinfo SET date = ?, name = ? WHERE room = ?";
+    db.query(sql, [date, name, room], (err, result) => { // date와 name의 위치 수정
+        if (err) {
+            console.error('MySQL 에러:', err);
+            res.status(500).send('정보 수정 중 오류가 발생했습니다.');
+        } else {
+            res.send('Obituary 정보가 성공적으로 업데이트되었습니다.');
+        }
+    });
+});
+
+// '/updateRoomObituary' 엔드포인트에 대한 PATCH 요청 핸들러
+app.patch('/updateRoomObituary', (req, res) => {
+    const { admission, funeralDate, burialDate, bankAccount, room } = req.body;
+    const sql = "UPDATE obituarynotice SET funeralDate = ?, burialDate = ?, bankAccount = ?, admission = ? WHERE room = ?";
+    db.query(sql, [funeralDate, burialDate, bankAccount, admission, room], (err, result) => {
+        if (err) {
+            console.error('MySQL 에러:', err);
+            res.status(500).send('방 정보 수정 중 오류가 발생했습니다.');
+        } else {
+            res.send('Room Obituary 정보가 성공적으로 업데이트되었습니다.');
+        }
+    });
+});
+
+// '/updateMourners' 엔드포인트에 대한 PATCH 요청 핸들러
+app.patch('/updateMourners', (req, res) => {
+    const { primaryMournerRelation, primaryMournerName, room } = req.body;
+
+    // primaryMournerRelation과 primaryMournerName의 길이가 같은지 확인
+    if (primaryMournerRelation.length !== primaryMournerName.length) {
+        return res.status(400).send('관계와 이름의 수가 일치하지 않습니다.');
+    }
+
+    // primaryMournerRelation과 primaryMournerName의 길이만큼 반복하여 쿼리 실행
+    let completedQueries = 0;
+    for (let i = 0; i < primaryMournerRelation.length; i++) {
+        const relation = primaryMournerRelation[i];
+        const name = primaryMournerName[i];
+
+        // 데이터베이스에 삽입
+        const sql = "UPDATE cheif_mourner SET relation = ?, name = ? WHERE room = ?";
+        db.query(sql, [relation, name, room], (err, result) => {
+            if (err) {
+                console.error('MySQL 에러:', err);
+                return res.status(500).send('유가족 정보를 업데이트하는 중 오류가 발생했습니다.');
+            }
+            completedQueries++;
+
+            // 모든 쿼리가 완료되었을 때 응답을 보냄
+            if (completedQueries === primaryMournerRelation.length) {
+                res.send('Mourners 정보가 성공적으로 업데이트되었습니다.');
+            }
+        });
+    }
+});
+
+app.delete('/deleteMourner', (req, res) => {
+    const room = req.body.room; // 클라이언트에서 전송한 사용자 ID
+
+    // 데이터베이스에서 해당 사용자 ID를 가진 레코드 삭제
+    const sql = 'DELETE FROM cheif_mourner WHERE room = ?';
+    db.query(sql, [room], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('상주 데이터 삭제 실패');
+            return;
+        }
+
+        // 삭제 성공 응답
+        res.send('상주 데이터가 삭제되었습니다.');
+    });
+});
+
 app.listen(3030, () => {
     console.log('서버가 3030번 포트에서 실행 중입니다.');
 });
