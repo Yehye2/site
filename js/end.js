@@ -238,18 +238,41 @@ document.getElementById('copyAddressButton').addEventListener('click', function 
     alert('주소가 복사되었습니다: ' + addressText);
 });
 
-Kakao.init(process.env.KAKAO_API_KEY);
-
-Kakao.Link.createDefaultButton({
-    container: '#shareButton', // 공유 버튼의 ID
-    objectType: 'feed',
-    content: {
-        title: '부고장 알림',
-        description: '부고장을 공유합니다.',
-        imageUrl: 'IMAGE_URL', // 공유할 이미지의 URL
-        link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href
-        }
+document.addEventListener('DOMContentLoaded', function () {
+    // 공유하기 버튼 클릭 이벤트 리스너 추가
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) {
+        shareButton.addEventListener('click', function () {
+            if (navigator.share) {
+                navigator.share({
+                    title: '부고장 알림',
+                    text: '부고장을 공유합니다.',
+                    url: window.location.href
+                }).then(() => {
+                    console.log('공유 성공');
+                }).catch((error) => {
+                    console.error('공유 실패:', error);
+                });
+            } else {
+                // Web Share API를 지원하지 않는 경우
+                alert('이 브라우저에서는 공유하기 기능을 지원하지 않습니다.');
+            }
+        });
     }
 });
+
+// Kakao.init(process.env.KAKAO_API_KEY);
+
+// Kakao.Link.createDefaultButton({
+//     container: '#shareButton', // 공유 버튼의 ID
+//     objectType: 'feed',
+//     content: {
+//         title: '부고장 알림',
+//         description: '부고장을 공유합니다.',
+//         imageUrl: 'IMAGE_URL', // 공유할 이미지의 URL
+//         link: {
+//             mobileWebUrl: window.location.href,
+//             webUrl: window.location.href
+//         }
+//     }
+// });
