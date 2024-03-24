@@ -756,6 +756,23 @@ app.delete('/deleteMourner', (req, res) => {
     });
 });
 
+app.delete('/deleteAllUser', (req, res) => {
+    const room = req.body.room; // 클라이언트에서 전송한 사용자 ID
+
+    // 데이터베이스에서 해당 사용자 ID를 가진 레코드 삭제
+    const sql = 'DELETE FROM users WHERE room = ?';
+    db.query(sql, [room], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('유저 데이터 삭제 실패');
+            return;
+        }
+
+        // 삭제 성공 응답
+        res.send('유저 데이터가 삭제되었습니다.');
+    });
+});
+
 app.listen(3030, () => {
     console.log('서버가 3030번 포트에서 실행 중입니다.');
 });

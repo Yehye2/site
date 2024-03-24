@@ -41,7 +41,7 @@ function fetchUserData(room) {
             // 서버 응답의 'status'를 확인하고 'data' 배열 처리
             if (responseData.status === 'success' && Array.isArray(responseData.data)) {
                 var table = '<table>';
-                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>가족관계</th><th>문자발송</th><th>카카오톡</th><th>삭제</th></tr>';
+                table += '<tr><th>이름</th><th>전화번호</th><th>계좌번호</th><th>호실</th><th>가족관계</th><th>문자발송</th><th>카카오톡</th><th>삭제</th><td colspan="8"><button class="deleteAllUsers" data-room="' + room + '" onclick="deleteAll()">전체삭제</button></td></tr>';
                 responseData.data.forEach(function (user) {
                     table += '<tr>';
                     table += '<td>' + user.name + '</td>';
@@ -64,6 +64,25 @@ function fetchUserData(room) {
         .catch(error => {
             console.error('Error:', error);
         });
+}
+
+function deleteAll() {
+    var room = document.querySelector('.deleteAllUsers').getAttribute('data-room'); // Get the room number from the data-room attribute of the button
+    fetch(`/deleteAllUser`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ room: room }) // Send the room number in the request body
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload(); // Refresh the page if the delete operation was successful
+            } else {
+                console.error('Error deleting room');
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function obituaryButton(userId) {
