@@ -164,7 +164,7 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
 });
 
 function sendMessage(phoneNumber, room) {
-    var message = "https://port-0-site-am952nlt31opz6.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
+    var message = "https://port-0-site-754g42alukrlrej.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
 
     axios.post('/send-sms', { to: phoneNumber, text: message })
         .then(response => {
