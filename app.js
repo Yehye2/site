@@ -188,7 +188,7 @@ app.post('/send-sms', (req, res) => {
 
     messageService.sendOne({
         to: to,
-        from: "01050422652", // 여기에 발신자 번호를 입력
+        from: "01082164533", // 여기에 발신자 번호를 입력
         text: text
     }).then(response => {
         console.log(response);
