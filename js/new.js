@@ -102,6 +102,8 @@ function fetchDataAndPopulateForm(room) {
                 primaryMournersContainer.appendChild(defaultNameInput);
                 primaryMournersContainer.appendChild(document.createElement('br'));
             } else {
+                // 상주자 정보가 없을 때의 처리
+                console.log('상주자 정보가 없습니다.');
                 // 상주 정보가 있는 경우에는 기존 로직을 그대로 사용하여 HTML 폼에 채움
                 mourners.forEach(mourner => {
                     const relationInput = document.createElement('input');
