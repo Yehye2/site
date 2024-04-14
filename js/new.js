@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // 서버에서 데이터를 가져오고 HTML 폼에 데이터를 채우는 함수 호출
     fetchDataAndPopulateForm(room);
 });
-
 // 서버에서 데이터를 가져와서 HTML 폼에 데이터를 채우는 함수
 function fetchDataAndPopulateForm(room) {
     // 첫 번째 fetch 함수
@@ -84,65 +83,33 @@ function fetchDataAndPopulateForm(room) {
             // 기존 상주 정보 삭제
             primaryMournersContainer.innerHTML = '';
 
-            // 상주 정보가 있는지 확인
             if (mourners.length === 0) {
-                // 상주 정보가 없는 경우에는 기본 HTML을 생성하여 추가
-                const defaultRelationInput = document.createElement('input');
-                defaultRelationInput.type = 'text';
-                defaultRelationInput.name = 'primaryMournerRelation[]';
-                defaultRelationInput.placeholder = '관계를 입력해주세요. 예: 아들';
+                console.log('상주 정보가 없습니다.');
+                return; // 상주 정보가 없으면 폼을 채우지 않고 함수 종료
+            }
 
-                const defaultNameInput = document.createElement('input');
-                defaultNameInput.type = 'text';
-                defaultNameInput.name = 'primaryMournerName[]';
-                defaultNameInput.placeholder = '이름을 입력해주세요. 예: 홍길동';
+            // 상주 정보를 HTML 폼에 채움
+            mourners.forEach(mourner => {
+                const relationInput = document.createElement('input');
+                relationInput.type = 'text';
+                relationInput.name = 'primaryMournerRelation[]';
+                relationInput.placeholder = '관계를 입력해주세요. 예: 아들';
+                relationInput.value = mourner.relation;
+
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.name = 'primaryMournerName[]';
+                nameInput.placeholder = '이름을 입력해주세요. 예: 홍길동';
+                nameInput.value = mourner.name;
 
                 // HTML 폼에 상주 정보 추가
-                primaryMournersContainer.appendChild(defaultRelationInput);
-                primaryMournersContainer.appendChild(defaultNameInput);
+                primaryMournersContainer.appendChild(relationInput);
+                primaryMournersContainer.appendChild(nameInput);
                 primaryMournersContainer.appendChild(document.createElement('br'));
-            } else {
-                // 상주자 정보가 없을 때의 처리
-                console.log('상주자 정보가 없습니다.');
-                // 상주 정보가 있는 경우에는 기존 로직을 그대로 사용하여 HTML 폼에 채움
-                mourners.forEach(mourner => {
-                    const relationInput = document.createElement('input');
-                    relationInput.type = 'text';
-                    relationInput.name = 'primaryMournerRelation[]';
-                    relationInput.placeholder = '관계를 입력해주세요. 예: 아들';
-                    relationInput.value = mourner.relation;
-
-                    const nameInput = document.createElement('input');
-                    nameInput.type = 'text';
-                    nameInput.name = 'primaryMournerName[]';
-                    nameInput.placeholder = '이름을 입력해주세요. 예: 홍길동';
-                    nameInput.value = mourner.name;
-
-                    // HTML 폼에 상주 정보 추가
-                    primaryMournersContainer.appendChild(relationInput);
-                    primaryMournersContainer.appendChild(nameInput);
-                    primaryMournersContainer.appendChild(document.createElement('br'));
-                });
-            }
+            });
         })
         .catch(error => {
             console.error('Error:', error);
-            // 오류 발생 시 기본 HTML을 생성하여 추가
-            const defaultRelationInput = document.createElement('input');
-            defaultRelationInput.type = 'text';
-            defaultRelationInput.name = 'primaryMournerRelation[]';
-            defaultRelationInput.placeholder = '관계를 입력해주세요. 예: 아들';
-
-            const defaultNameInput = document.createElement('input');
-            defaultNameInput.type = 'text';
-            defaultNameInput.name = 'primaryMournerName[]';
-            defaultNameInput.placeholder = '이름을 입력해주세요. 예: 홍길동';
-
-            // HTML 폼에 상주 정보 추가
-            const primaryMournersContainer = document.getElementById('primaryMourners');
-            primaryMournersContainer.appendChild(defaultRelationInput);
-            primaryMournersContainer.appendChild(defaultNameInput);
-            primaryMournersContainer.appendChild(document.createElement('br'));
         });
 }
 
