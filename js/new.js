@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 서버에서 데이터를 가져오고 HTML 폼에 데이터를 채우는 함수 호출
     fetchDataAndPopulateForm(room);
 });
+
 // 서버에서 데이터를 가져와서 HTML 폼에 데이터를 채우는 함수
 function fetchDataAndPopulateForm(room) {
     // 첫 번째 fetch 함수
@@ -124,6 +125,22 @@ function fetchDataAndPopulateForm(room) {
         })
         .catch(error => {
             console.error('Error:', error);
+            // 오류 발생 시 기본 HTML을 생성하여 추가
+            const defaultRelationInput = document.createElement('input');
+            defaultRelationInput.type = 'text';
+            defaultRelationInput.name = 'primaryMournerRelation[]';
+            defaultRelationInput.placeholder = '관계를 입력해주세요. 예: 아들';
+
+            const defaultNameInput = document.createElement('input');
+            defaultNameInput.type = 'text';
+            defaultNameInput.name = 'primaryMournerName[]';
+            defaultNameInput.placeholder = '이름을 입력해주세요. 예: 홍길동';
+
+            // HTML 폼에 상주 정보 추가
+            const primaryMournersContainer = document.getElementById('primaryMourners');
+            primaryMournersContainer.appendChild(defaultRelationInput);
+            primaryMournersContainer.appendChild(defaultNameInput);
+            primaryMournersContainer.appendChild(document.createElement('br'));
         });
 }
 
