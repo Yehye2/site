@@ -38,49 +38,36 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            if (data.status === 'success') {
-                // 주문이 성공적으로 처리되면 알림톡 발송
-                sendKakao();
-            } else {
-                console.error('주문 처리 중 오류 발생:', data.error);
-                alert('주문 처리 중 오류가 발생했습니다.');
-            }
             alert('주문이 완료되었습니다. 입금시 발송인 성함가 동일한 계좌번호로 입금해주세요.');
+            sendMessage(); // 여기에서 sendMessage() 함수를 호출합니다.
             window.location.reload();
         })
         .catch(error => console.error('Error:', error));
 });
 
-function sendKakao() {
-    var message = "주문이 들어왔습니다.";
+function sendMessage() {
+    var message = "주문이 들어왔습니다."; // 'room' 변수의 값을 URL에 추가
 
-    fetch('/sendkakao', {
+    fetch('/send-sms', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json', // JSON 형태의 데이터를 보내기 위한 헤더 설정
         },
-        body: JSON.stringify({ text: message })
+        body: JSON.stringify({ to: "01082164533", text: message }), // 데이터를 JSON 문자열로 변환
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('알림톡 발송 실패');
-            }
-            return response.json();
-        })
+        .then(response => response.json()) // 응답을 JSON 형태로 파싱
         .then(data => {
             if (data.status === 'success') {
-                alert('알림톡이 발송되었습니다.');
+                alert('문자가 발송되었습니다.');
             } else {
-                throw new Error('알림톡 발송 실패');
+                alert('문자 발송 실패');
             }
         })
         .catch(error => {
             console.error(error);
-            alert('알림톡 발송 중 오류가 발생했습니다.');
+            alert('문자 발송 중 오류가 발생했습니다.');
         });
 }
-
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
