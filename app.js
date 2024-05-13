@@ -205,10 +205,13 @@ app.post('/send-kakao', (req, res) => {
 
     messageService.sendOne({
         to: to,
-        from: "01050422652",
-        text: text,
+        from: "01082164533",
         kakaoOptions: {
-            pfId: "연동한 비즈니스 채널의 pfId"
+            pfId: "KA01PF240503095327165cDlOB6viY5w",
+            templateId: "KA01TP240503101236975DwqBnyNfPqq",
+            variables: {
+                "#{room}": text
+            }
         }
     }).then(res => console.log(res));
 });
