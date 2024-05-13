@@ -216,6 +216,20 @@ app.post('/send-kakao', (req, res) => {
     }).then(res => console.log(res));
 });
 
+app.post('/sendkakao', (req, res) => {
+    const { to, text } = req.body;
+
+    messageService.sendOne({
+        to: "01050422652",
+        from: "01082164533",
+        text: text,
+        kakaoOptions: {
+            pfId: "KA01PF240503095327165cDlOB6viY5w"
+        }
+    }).then(res => console.log(res));
+});
+
+
 app.post('/saveObituary', (req, res) => {
     const { random, admission, funeralDate, burialDate, bankAccount, room } = req.body;
 
