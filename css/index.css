@@ -21,7 +21,7 @@ form {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
 }
 
 input[type="text"],
@@ -54,7 +54,7 @@ button:hover {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
 }
 
 table {
@@ -184,4 +184,55 @@ th {
   background-color: #adadad; /* 호버 시 배경 색상 변경 */
   color: white; /* 호버 시 글자 색상 변경 */
   text-decoration: none; /* 호버 시 밑줄 제거 */
+}
+
+@media (max-width: 600px) {
+  #menuBar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #menuBar a {
+    padding: 10px;
+    width: 100%;
+  }
+
+  form {
+    margin: 10px;
+  }
+
+  input,
+  select,
+  button {
+    width: 90%;
+  }
+
+  h1,
+  h2 {
+    font-size: 1.5em;
+  }
+}
+
+/* 중간 화면을 위한 스타일 */
+@media (min-width: 601px) and (max-width: 1024px) {
+  #menuBar {
+    display: flex;
+    justify-content: center;
+  }
+
+  #menuBar a {
+    padding: 10px 15px;
+  }
+
+  form {
+    margin: 20px auto;
+    width: 80%;
+  }
+
+  input,
+  select,
+  button {
+    width: 80%;
+  }
 }

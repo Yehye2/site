@@ -144,7 +144,7 @@ function manageObituaryButton(room) {
 }
 
 let tableElement = document.querySelector('#userInfoDisplay'); // 테이블의 ID로 바꾸세요
-let buttonHTML = '<button id="obituaryButton" data-room="' + room + '">부고장</button>';
+let buttonHTML = '<button id="obituaryButton" data-room="' + room + '">부고장 확인</button>';
 tableElement.insertAdjacentHTML('afterend', buttonHTML);
 
 document.getElementById('userInfoDisplay').addEventListener('click', function (e) {
@@ -181,7 +181,7 @@ function sendMessage(phoneNumber, room) {
 }
 
 function sendKakao(phoneNumber, room) {
-    var message = "https://port-0-site-am952nlt31opz6.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
+    var message = "https://port-0-site-754g42alukrlrej.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
 
     axios.post('/send-kakao', { to: phoneNumber, text: message })
         .then(response => {
