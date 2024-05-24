@@ -67,6 +67,18 @@ function fetchDataAndPopulateForm(room) {
             document.getElementById('funeralDate').value = data.obituary.funeralDate;
             document.getElementById('burialDate').value = data.obituary.burialDate;
             document.getElementById('bankAccount').value = data.obituary.bankAccount;
+
+            // State 값을 설정
+            const stateSelect = document.getElementById('State');
+            const stateValue = data.obituary.State;
+            let stateOption = Array.from(stateSelect.options).find(option => option.value === stateValue);
+
+            if (!stateOption) {
+                stateOption = new Option(stateValue, stateValue);
+                stateSelect.add(stateOption);
+            }
+
+            stateSelect.value = stateValue;
         })
         .catch(error => {
             console.error('Error:', error);
@@ -164,6 +176,7 @@ document.getElementById('saveButton').addEventListener('click', function (event)
     }));
 
     // Gather data from form inputs
+    var State = document.getElementById('State').value;
     var obituaryName = document.getElementById('obituaryName').value;
     var obituaryDateText = document.getElementById('obituaryDateText').value;
     var admission = document.getElementById('admission').value;
@@ -192,6 +205,7 @@ document.getElementById('saveButton').addEventListener('click', function (event)
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                State: State,
                 admission: admission,
                 funeralDate: funeralDate,
                 burialDate: burialDate,
@@ -250,6 +264,7 @@ document.getElementById('updateButton').addEventListener('click', function (even
     event.preventDefault(); // 기본 이벤트 동작 방지
 
     // 폼에서 데이터 수집
+    var State = document.getElementById('State').value;
     var obituaryName = document.getElementById('obituaryName').value;
     var obituaryDateText = document.getElementById('obituaryDateText').value;
     var admission = document.getElementById('admission').value;
@@ -294,6 +309,7 @@ document.getElementById('updateButton').addEventListener('click', function (even
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                State: State,
                 admission: admission,
                 funeralDate: funeralDate,
                 burialDate: burialDate,

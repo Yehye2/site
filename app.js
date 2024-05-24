@@ -213,7 +213,13 @@ app.post('/send-kakao', (req, res) => {
                 "#{room}": text
             }
         }
-    }).then(res => console.log(res));
+    }).then(response => {
+        console.log(response);
+        res.send({ status: 'success', message: '알림톡이 발송되었습니다.' });
+    }).catch(err => {
+        console.error(err);
+        res.send({ status: 'error', message: '알림톡 발송 실패' });
+    });
 });
 
 app.post('/saveObituary', (req, res) => {
@@ -235,11 +241,11 @@ app.post('/saveObituary', (req, res) => {
 
 //호실번호로 정보저장
 app.post('/saveRoomObituary', (req, res) => {
-    const { admission, funeralDate, burialDate, bankAccount, room } = req.body;
+    const { State, admission, funeralDate, burialDate, bankAccount, room } = req.body;
 
-    const query = 'INSERT INTO obituarynotice (admission, funeralDate, burialDate, bankAccount, room) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO obituarynotice (State, admission, funeralDate, burialDate, bankAccount, room) VALUES (?, ?, ?, ?, ?, ?)';
 
-    db.query(query, [admission, funeralDate, burialDate, bankAccount, room], (error, results) => {
+    db.query(query, [State, admission, funeralDate, burialDate, bankAccount, room], (error, results) => {
         if (error) {
             console.error(error);  // Log the error for debugging
             return res.status(500).send('Error saving to database');
@@ -319,7 +325,7 @@ app.get('/getobituarynoticeByRoom', (req, res) => {
         return;
     }
 
-    const query = 'SELECT admission, funeralDate, burialDate, bankAccount FROM obituarynotice WHERE room = ?';
+    const query = 'SELECT State, admission, funeralDate, burialDate, bankAccount FROM obituarynotice WHERE room = ?';
 
     db.query(query, [room], (err, results) => {
         if (err) {
@@ -336,6 +342,7 @@ app.get('/getobituarynoticeByRoom', (req, res) => {
         const obituaryInfo = results[0];
         res.json({
             obituary: {
+                State: obituaryInfo.State,
                 admission: obituaryInfo.admission,
                 funeralDate: obituaryInfo.funeralDate,
                 burialDate: obituaryInfo.burialDate,
