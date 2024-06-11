@@ -35,14 +35,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('admission').textContent = data.obituary.admission;
                 document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
                 document.getElementById('burialDate').textContent = data.obituary.burialDate;
+                document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
+                // Room 값을 표시
+                document.getElementById('room').textContent = `${room}호실`;
             })
             .catch(error => {
                 console.error('Error:', error);
             });
     } else {
-        console.log('userId parameter not found in URL.');
+        console.log('URL에 room 파라미터가 없습니다.');
     }
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
