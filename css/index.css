@@ -6,7 +6,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh; /* 뷰포트의 전체 높이 */
+  flex-direction: column; /* 세로로 요소 배치 */
 }
 
 h1,
@@ -22,6 +23,7 @@ form {
   margin-bottom: 20px;
   width: 100%;
   max-width: 900px;
+  box-sizing: border-box;
 }
 
 input[type="text"],
@@ -32,6 +34,7 @@ select {
   margin-bottom: 20px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
 button {
@@ -55,11 +58,13 @@ button:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 900px;
+  box-sizing: border-box;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  box-sizing: border-box;
 }
 
 th,
@@ -99,6 +104,7 @@ th {
   width: 80%; /* Could be more or less, depending on screen size */
   position: relative; /* For the close button positioning */
   border-radius: 10px; /* Optional: for rounded corners */
+  box-sizing: border-box;
 }
 
 /* The Close Button */
@@ -129,6 +135,7 @@ th {
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 /* Buttons Styling */
@@ -185,54 +192,3 @@ th {
   color: white; /* 호버 시 글자 색상 변경 */
   text-decoration: none; /* 호버 시 밑줄 제거 */
 }
-
-/* @media (max-width: 600px) {
-  #menuBar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #menuBar a {
-    padding: 10px;
-    width: 100%;
-  }
-
-  form {
-    margin: 10px;
-  }
-
-  input,
-  select,
-  button {
-    width: 90%;
-  }
-
-  h1,
-  h2 {
-    font-size: 1.5em;
-  }
-} */
-
-/* 중간 화면을 위한 스타일 */
-/* @media (min-width: 601px) and (max-width: 1024px) {
-  #menuBar {
-    display: flex;
-    justify-content: center;
-  }
-
-  #menuBar a {
-    padding: 10px 15px;
-  }
-
-  form {
-    margin: 20px auto;
-    width: 80%;
-  }
-
-  input,
-  select,
-  button {
-    width: 80%;
-  }
-} */
