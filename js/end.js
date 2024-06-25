@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var room = params.get('room');
 
     if (room) {
-        fetch(`/cheif_mourner?room=${room}`) // 오타 수정: chief_mourner
+        fetch(`/cheif_mourner?room=${room}`)
             .then(response => response.json())
             .then(data => {
                 // 상주 정보를 담을 컨테이너
@@ -153,18 +153,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 그룹화된 상주 정보 동적 추가
                 Object.entries(mournerGroups).forEach(([relation, names], index) => {
                     const mournerDiv = document.createElement('div');
-                    mournerDiv.className = 'mourner';
-                    mournerDiv.style.display = 'flex';
-                    mournerDiv.style.justifyContent = 'flex-start';
-                    mournerDiv.style.alignItems = 'center';
-                    mournerDiv.style.marginBottom = '10px';
+                    mournerDiv.className = 'mourner flex items-center py-2';
 
-                    const relationP = document.createElement('p');
-                    relationP.textContent = `${relation}: `;
-                    relationP.style.marginRight = '10px';
+                    const relationP = document.createElement('span');
+                    relationP.textContent = `${relation} `;
+                    relationP.className = 'text-gray-600 flex-shrink-0 w-20 font-bold';
 
                     const namesP = document.createElement('p');
                     namesP.textContent = names.join(', '); // 이름을 쉼표로 구분하여 나열
+                    namesP.className = 'text-gray-800 ml-4 font-bold';
 
                     mournerDiv.appendChild(relationP);
                     mournerDiv.appendChild(namesP);
@@ -177,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 });
+
 
 
 

@@ -3,88 +3,87 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/obituary_notice.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>목포효사랑장례식장</title>
     <script type="text/javascript"
         src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=%MAP_API_KEY%"></script>
-    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>부고장 알림</title>
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://webfontworld.github.io/ChosunGs/ChosunGs.css" rel="stylesheet">
+    <style>
+        .font-chosun {
+            font-family: 'ChosunGs', serif;
+        }
+    </style>
 </head>
 
-<body>
-    <div class="content-wrapper">
-        <div class="navbar">
-            <!-- 뒤로 가기 아이콘 -->
-            <!-- 공유 아이콘 -->
-            <!-- 세 개의 점 메뉴 아이콘 -->
+<body class="bg-gray-100 font-chosun">
+
+    <div class="max-w-lg mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-10">
+        <div class="text-center bg-gray-800 text-white py-4">
+            <h1 class="obituary-field font-bold">목포효사랑장례식장</h1>
         </div>
-
-        <div class="content">
-            <h1>訃告</h1>
-
-
-            <p id="obituaryName">홍길동</p>
-            <p id="obituaryDateText">2021년 10월 1일</p>
+        <div class="text-center bg-gray-700 text-white py-4">
+            <h2 class="text-xl font-bold">訃告</h2>
         </div>
-
-        <div class="content">
-            <div class="obituary-section">
-                <div class="obituary-field">
-                    <h3>장례식장</h3>
-                    <p id="funeral">효사랑 장례식장, 전라남도 목포시 백년대로231번길 13</p>
-                    <p id="room">101호</p>
-                    <button id="copyAddressButton">주소 복사하기</button>
+        <div class="text-center py-4">
+            <p class="mt-4 text-lg font-semibold" id="obituaryName">故 정연빈(성도) (男)</p>
+            <p class="text-gray-600 font-semibold" id="obituaryDateText">2024년 06월 20일 별세</p>
+        </div>
+        <div class="px-6 py-4">
+            <div class="flex justify-between border-t border-gray-200 py-2">
+                <span class="text-gray-600 font-semibold">상주</span>
+            </div>
+            <div id="chiefMourner">
+                <div class="flex items-center py-2">
+                    <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">부</span>
+                    <span class="text-gray-800 ml-4 font-semibold">박성수</span>
                 </div>
-                <div class="obituary-field">
-                    <h3>장례식장 위치</h3>
-                    <div id="map" style="width:50%;height:200px;"></div>
+                <div class="flex items-center py-2">
+                    <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">모</span>
+                    <span class="text-gray-800 ml-4 font-semibold">김선옥</span>
                 </div>
-                <div class="obituary-field">
-                    <h3>상주</h3>
-                    <div id="chiefMourner" style="display: flex; flex-direction: column;">
-                        <!-- 예시 데이터, 실제 데이터로 대체 필요 -->
-                        <div class="mourner"
-                            style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 10px;">
-                            <p id="relation1" style="margin-right: 10px;">아들</p>
-                            <p id="name1">홍길동</p>
-                        </div>
-                        <div class="mourner"
-                            style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 10px;">
-                            <p id="relation2" style="margin-right: 10px;">딸</p>
-                            <p id="name2">홍길순</p>
-                        </div>
-                        <!-- 더 많은 상주 정보를 추가할 수 있습니다. -->
-                    </div>
-                </div>
-                <div class="obituary-field">
-                    <h3>입관</h3>
-                    <p id="admission">2024년 1월 20일부터</p>
-                </div>
-                <div class="obituary-field">
-                    <h3>발인</h3>
-                    <p id="funeralDate">2024년 1월 21일 오후 2시</p>
-                </div>
-                <div class="obituary-field">
-                    <h3>장지</h3>
-                    <p id="burialDate">2024년 1월 21일 오후 3시, 묘지 이름</p>
-                </div>
-                <div class="obituary-field">
-                    <h3>유가족 통장</h3>
-                    <p id="bankAccount">은행명: XXXXX, 계좌번호: XXXXXXXXXX</p>
-                </div>
-
-                <div class="footer">
-                    <button type="button" class="btn" onclick="window.location.href='sell'">근조화환 주문</button>
-                    <button type="button" class="btn" id="shareButton">공유하기</button> <!-- 공유하기 버튼 추가 -->
-                </div>
-
+            </div>
+            <div class="flex items-center border-t border-gray-200 py-2">
+                <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">빈소</span>
+                <span class="text-gray-800 ml-4 font-semibold" id="room">402호</span>
+            </div>
+            <div class="flex items-center py-2">
+                <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">입관</span>
+                <span class="text-gray-800 ml-4 font-semibold" id="admission">2024년 06월 21일 (금) 10시 00분</span>
+            </div>
+            <div class="flex items-center py-2">
+                <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">발인</span>
+                <span class="text-gray-800 ml-4 font-semibold" id="funeralDate">2024년 06월 22일 (토) 12시 40분</span>
+            </div>
+            <div class="flex items-center py-2">
+                <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">장지</span>
+                <span class="text-gray-800 ml-4 font-semibold" id="burialDate">화장14시-목포 승화원</span>
+            </div>
+            <div class="flex items-center py-2">
+                <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">계좌번호</span>
+                <span class="text-gray-800 ml-4 font-semibold" id="bankAccount">계좌번호</span>
             </div>
         </div>
-        <!-- <footer>
-            <p>회사명: ABC 주식회사 | 대표전화: 123-456-7890 | <a href="#">도움말</a></p>
-        </footer> -->
-        <script src="/js/end.js"></script>
+        <div class="px-6 py-4">
+            <h3 class="text-gray-800 font-semibold mb-2">오시는 길</h3>
+            <div id="map" style="width:300px;height:200px;"></div>
+            <div class="flex justify-between space-x-2">
+                <button id="copyAddressButton" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-semibold">주소
+                    복사하기</button>
+            </div>
+            <div class="mt-4">
+                <p class="text-gray-800 font-semibold">목포효사랑장례식장</p>
+                <p id="funeral" class="text-gray-600 font-semibold">전남 목포시 백년대로231번길 13 (상동)</p>
+            </div>
+        </div>
+        <div class="flex justify-between bg-gray-800 text-white py-4">
+            <button class="w-1/2 py-2 font-semibold" onclick="window.location.href='sell'">근조 화환</button>
+            <button class="w-1/2 py-2 font-semibold" id="shareButton">공유하기</button>
+        </div>
+    </div>
+
+    <script src="/js/end.js"></script>
 
 </body>
 
