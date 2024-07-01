@@ -12,7 +12,7 @@
     <link href="https://webfontworld.github.io/ChosunGs/ChosunGs.css" rel="stylesheet">
     <style>
         .font-chosun {
-            font-family: 'ChosunGs', serif;
+            font-family: 'ChosunGs';
         }
     </style>
 </head>
@@ -27,6 +27,9 @@
             <h2 class="text-xl font-bold">訃告</h2>
         </div>
         <div class="text-center py-4">
+            <img class="w-32 h-32 mx-auto rounded-full"
+                src="https://img.freepik.com/premium-photo/white-chrysanthemum-flower-isolated-on-black-background_154565-58.jpg"
+                alt="Deceased person">
             <p class="mt-4 text-lg font-semibold" id="obituaryName">故 정연빈(성도) (男)</p>
             <p class="text-gray-600 font-semibold" id="obituaryDateText">2024년 06월 20일 별세</p>
         </div>
@@ -60,9 +63,10 @@
                 <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">장지</span>
                 <span class="text-gray-800 ml-4 font-semibold" id="burialDate">화장14시-목포 승화원</span>
             </div>
-            <div class="flex items-center py-2">
-                <span class="text-gray-600 flex-shrink-0 w-20 font-semibold">계좌번호</span>
-                <input type="text" class="text-gray-800 ml-4 font-semibold" id="bankAccount" placeholder="계좌번호를 입력하세요">
+            <div class="flex flex-col items-start py-2">
+                <span class="text-gray-600 w-20 font-semibold">계좌번호</span>
+                <input type="text" class="text-gray-800 mt-2 mb-4 font-semibold" id="bankAccount"
+                    placeholder="계좌번호를 입력하세요">
                 <button id="saveButton" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-semibold">저장</button>
             </div>
         </div>

@@ -201,16 +201,19 @@ app.post('/send-sms', (req, res) => {
 
 // 카카오톡 단일 발송
 app.post('/send-kakao', (req, res) => {
-    const { to, text } = req.body;
+    const { to, text, name, room, mournersString } = req.body;
 
     messageService.sendOne({
         to: to,
         from: "01082164533",
         kakaoOptions: {
             pfId: "KA01PF240503095327165cDlOB6viY5w",
-            templateId: "KA01TP240503101236975DwqBnyNfPqq",
+            templateId: "KA01TP240628141922199h96yeQ6wCmM",
             variables: {
-                "#{room}": text
+                "#{name}": name,
+                "#{link}": room,
+                "#{room}": text,
+                "#{mourners}": mournersString
             }
         }
     }).then(response => {
