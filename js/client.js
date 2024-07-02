@@ -283,7 +283,7 @@ ${formattedMournersString}
 }
 function sendKakao(phoneNumber, name, room, mournersString) {
     var formattedMournersString = mournersString.split(', ').join('\n');
-    var message = "https://port-0-site-754g42alukrlrej.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
+    var message = room; // 'room' 변수의 값을 URL에 추가
 
     axios.post('/send-kakao', {
         to: phoneNumber,
