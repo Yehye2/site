@@ -208,7 +208,7 @@ app.post('/send-kakao', (req, res) => {
         from: "01082164533",
         kakaoOptions: {
             pfId: "KA01PF240503095327165cDlOB6viY5w",
-            templateId: "KA01TP240628141922199h96yeQ6wCmM",
+            templateId: "KA01TP240701131154461gtSnSJiAoKc",
             variables: {
                 "#{name}": name,
                 "#{link}": room,

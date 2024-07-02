@@ -207,28 +207,35 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
                     var name = data.obituary.name;
                     var room = data.obituary.room;
 
-                    // Chief mourner 정보 요청을 추가합니다.
-                    fetch(`/cheif_mourner?room=${room}`)
+                    // Chief mourner 정보 요청을 추가합니다
+                    return fetch(`/cheif_mourner?room=${room}`)
                         .then(response => response.json())
-                        .then(chiefData => {
-                            if (chiefData.status === 'success' && chiefData.mourners) {
-                                var mournersString = chiefData.mourners.map(mourner => `${mourner.relation}: ${mourner.name}`).join(', ');
+                        .then(mournersData => {
+                            // API 응답 데이터를 올바르게 처리
+                            if (Array.isArray(mournersData) && mournersData.length > 0) {
+                                // 상주 정보 문자열 생성
+                                var mournersString = mournersData.map(mourner => `${mourner.relation}: ${mourner.name}`).join(', ');
 
-                                // sendKakao 함수에 phoneNumber, name, room, mournersString을 전달합니다.
+                                // sendMessage 함수에 필요한 데이터를 전달합니다
+                                console.log('발송할 메시지:', mournersString);
                                 sendKakao(phoneNumber, name, room, mournersString);
                             } else {
-                                console.error('상주 정보를 찾을 수 없습니다.');
+                                console.error('상주 정보를 찾을 수 없습니다. 응답 데이터:', mournersData);
+                                alert('상주 정보를 찾을 수 없습니다.');
                             }
                         })
                         .catch(error => {
                             console.error('상주 정보 요청 중 에러 발생:', error);
+                            alert('상주 정보 요청 중 에러가 발생했습니다.');
                         });
                 } else {
-                    console.error('부고 정보를 찾을 수 없습니다.');
+                    console.error('부고 정보를 찾을 수 없습니다. 응답 데이터:', data);
+                    alert('부고 정보를 찾을 수 없습니다.');
                 }
             })
             .catch(error => {
                 console.error('요청 중 에러 발생:', error);
+                alert('요청 중 에러가 발생했습니다.');
             });
     }
 });
@@ -275,6 +282,7 @@ ${formattedMournersString}
         });
 }
 function sendKakao(phoneNumber, name, room, mournersString) {
+    var formattedMournersString = mournersString.split(', ').join('\n');
     var message = "https://port-0-site-754g42alukrlrej.sel5.cloudtype.app/notice?room=" + room; // 'room' 변수의 값을 URL에 추가
 
     axios.post('/send-kakao', {
@@ -282,7 +290,7 @@ function sendKakao(phoneNumber, name, room, mournersString) {
         text: message,
         name: name,
         room: room,
-        mournersString: mournersString // 필요한 경우 서버로 mournersString 데이터를 보냅니다.
+        mournersString: formattedMournersString // 필요한 경우 서버로 mournersString 데이터를 보냅니다.
     })
         .then(response => {
             if (response.data.status === 'success') {
