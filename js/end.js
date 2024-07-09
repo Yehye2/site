@@ -263,33 +263,71 @@ document.getElementById('copyAddressButton').addEventListener('click', function 
 //     }
 // });
 
-Kakao.init(process.env.KAKAO_API_KEY);
-
 document.addEventListener('DOMContentLoaded', function () {
-    const shareButton = document.getElementById('shareButton');
-    if (shareButton) {
-        shareButton.addEventListener('click', function () {
-            Kakao.Link.sendDefault({
-                objectType: 'feed',
-                content: {
-                    title: '부고장 알림',
-                    description: '부고장을 공유합니다.',
-                    imageUrl: 'IMAGE_URL', // 공유할 이미지의 URL을 설정하세요.
-                    link: {
-                        mobileWebUrl: window.location.href,
-                        webUrl: window.location.href
-                    }
-                },
-                buttons: [
-                    {
-                        title: '웹으로 보기',
-                        link: {
-                            mobileWebUrl: window.location.href,
-                            webUrl: window.location.href
+    // Fetch the Kakao API Key from the server
+    fetch('/config')
+        .then(response => response.json())
+        .then(config => {
+            const KAKAO_APP_KEY = config.KAKAO_API_KEY;
+            console.log("Received KAKAO_APP_KEY:", KAKAO_APP_KEY);
+
+            // Initialize Kakao SDK with the fetched key
+            Kakao.init(KAKAO_APP_KEY);
+            console.log("Kakao SDK initialized with APP_KEY.");
+
+            // Fetch the obituary information
+            var params = new URLSearchParams(window.location.search);
+            var room = params.get('room');
+
+            if (room) {
+                fetch(`/getObituaryInfoByRoom?room=${room}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Extract the name from the data
+                        var name = data.obituary.name;
+
+                        // Find the share button and attach the event listener
+                        const shareButton = document.getElementById('shareButton');
+                        if (shareButton) {
+                            shareButton.addEventListener('click', function () {
+                                Kakao.Link.sendDefault({
+                                    objectType: 'feed',
+                                    content: {
+                                        title: '[부고알림] 목포효사랑장례식장',
+                                        description: `故 ${name}님의 부고를 공유합니다.`,
+                                        imageUrl: "https://img.freepik.com/premium-photo/white-chrysanthemum-flower-isolated-on-black-background_154565-58.jpg", // 공유할 이미지의 URL을 설정하세요.
+                                        link: {
+                                            mobileWebUrl: window.location.href,
+                                            webUrl: window.location.href
+                                        }
+                                    },
+                                    buttons: [
+                                        {
+                                            title: '웹으로 보기',
+                                            link: {
+                                                mobileWebUrl: window.location.href,
+                                                webUrl: window.location.href
+                                            }
+                                        }
+                                    ]
+                                }).then(() => {
+                                    console.log("Successfully shared.");
+                                }).catch((error) => {
+                                    console.error("Error while sharing: ", error);
+                                });
+                            });
+                        } else {
+                            console.error("Share button not found.");
                         }
-                    }
-                ]
-            });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching obituary information:', error);
+                    });
+            } else {
+                console.log('room 파라미터가 URL에 없습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching KAKAO_APP_KEY:', error);
         });
-    }
 });

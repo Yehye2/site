@@ -43,6 +43,7 @@ db.connect((err) => {
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/images', express.static(path.join(__dirname, 'image')));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/html/index_new.html'));
@@ -51,6 +52,10 @@ app.get('/end', (req, res) => {
     html = html.replace('%MAP_API_KEY%', process.env.MAP_API_KEY);
     res.send(html);
 });
+app.get('/config', (req, res) => {
+    res.json({ KAKAO_API_KEY: process.env.KAKAO_API_KEY });
+});
+
 app.get('/notice', (req, res) => {
     let html = fs.readFileSync(path.join(__dirname, '/html/obituary_notice_new.html'), 'utf8');
     html = html.replace('%MAP_API_KEY%', process.env.MAP_API_KEY);
@@ -117,6 +122,9 @@ const multerUpload = multer({
 });
 
 
+app.get('/config', (req, res) => {
+    res.json({ KAKAO_APP_KEY: process.env.KAKAO_APP_KEY });
+});
 
 app.post('/upload', multerUpload.single('image'), (req, res) => {
     res.send('이미지가 성공적으로 업로드 되었습니다.');
