@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
     var room = params.get('room');
@@ -46,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('URL에 room 파라미터가 없습니다.');
     }
 });
-
 
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
@@ -175,11 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-
-
-
 function submitCondolence() {
-
     // Redirect to a new page or display a message indicating that editing is no longer possible
     // For example:
     window.location.href = '/final_obituary_notice.html';
@@ -193,29 +187,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var map = new naver.maps.Map('map', mapOptions);
 });
-
-// document.addEventListener('DOMContentLoaded', function () {
-//     // 공유하기 버튼 클릭 이벤트 리스너 추가
-//     const shareButton = document.getElementById('shareButton');
-//     if (shareButton) {
-//         shareButton.addEventListener('click', function () {
-//             if (navigator.share) {
-//                 navigator.share({
-//                     title: '부고장 알림',
-//                     text: '부고장을 공유합니다.',
-//                     url: window.location.href
-//                 }).then(() => {
-//                     console.log('공유 성공');
-//                 }).catch((error) => {
-//                     console.error('공유 실패:', error);
-//                 });
-//             } else {
-//                 // Web Share API를 지원하지 않는 경우
-//                 alert('이 브라우저에서는 공유하기 기능을 지원하지 않습니다.');
-//             }
-//         });
-//     }
-// });
 
 document.getElementById('copyAddressButton').addEventListener('click', function () {
     // 텍스트 요소에서 주소 가져오기
@@ -240,56 +211,49 @@ document.getElementById('copyAddressButton').addEventListener('click', function 
     alert('주소가 복사되었습니다: ' + addressText);
 });
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     // 공유하기 버튼 클릭 이벤트 리스너 추가
-//     const shareButton = document.getElementById('shareButton');
-//     if (shareButton) {
-//         shareButton.addEventListener('click', function () {
-//             if (navigator.share) {
-//                 navigator.share({
-//                     title: '부고장 알림',
-//                     text: '부고장을 공유합니다.',
-//                     url: window.location.href
-//                 }).then(() => {
-//                     console.log('공유 성공');
-//                 }).catch((error) => {
-//                     console.error('공유 실패:', error);
-//                 });
-//             } else {
-//                 // Web Share API를 지원하지 않는 경우
-//                 alert('이 브라우저에서는 공유하기 기능을 지원하지 않습니다.');
-//             }
-//         });
-//     }
-// });
-
 document.addEventListener('DOMContentLoaded', function () {
-    // Fetch the Kakao API Key from the server
-    fetch('/config')
-        .then(response => response.json())
-        .then(config => {
-            const KAKAO_APP_KEY = config.KAKAO_API_KEY;
-            console.log("Received KAKAO_APP_KEY:", KAKAO_APP_KEY);
+    // 공유하기 버튼 클릭 이벤트 리스너 추가
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) {
+        shareButton.addEventListener('click', function () {
+            const shareModal = document.getElementById('shareModal');
+            shareModal.classList.remove('hidden');
+        });
+    }
 
-            // Initialize Kakao SDK with the fetched key
-            Kakao.init(KAKAO_APP_KEY);
-            console.log("Kakao SDK initialized with APP_KEY.");
+    const closeModal = document.getElementById('closeModal');
+    if (closeModal) {
+        closeModal.addEventListener('click', function () {
+            const shareModal = document.getElementById('shareModal');
+            shareModal.classList.add('hidden');
+        });
+    }
 
-            // Fetch the obituary information
-            var params = new URLSearchParams(window.location.search);
-            var room = params.get('room');
+    const shareKakao = document.getElementById('shareKakao');
+    if (shareKakao) {
+        shareKakao.addEventListener('click', function () {
+            // Fetch the Kakao API Key from the server
+            fetch('/config')
+                .then(response => response.json())
+                .then(config => {
+                    const KAKAO_APP_KEY = config.KAKAO_API_KEY;
+                    console.log("Received KAKAO_APP_KEY:", KAKAO_APP_KEY);
 
-            if (room) {
-                fetch(`/getObituaryInfoByRoom?room=${room}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Extract the name from the data
-                        var name = data.obituary.name;
+                    // Initialize Kakao SDK with the fetched key
+                    Kakao.init(KAKAO_APP_KEY);
+                    console.log("Kakao SDK initialized with APP_KEY.");
 
-                        // Find the share button and attach the event listener
-                        const shareButton = document.getElementById('shareButton');
-                        if (shareButton) {
-                            shareButton.addEventListener('click', function () {
+                    // Fetch the obituary information
+                    var params = new URLSearchParams(window.location.search);
+                    var room = params.get('room');
+
+                    if (room) {
+                        fetch(`/getObituaryInfoByRoom?room=${room}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                // Extract the name from the data
+                                var name = data.obituary.name;
+
                                 Kakao.Link.sendDefault({
                                     objectType: 'feed',
                                     content: {
@@ -312,13 +276,48 @@ document.addEventListener('DOMContentLoaded', function () {
                                     ]
                                 }).then(() => {
                                     console.log("Successfully shared.");
+                                    const shareModal = document.getElementById('shareModal');
+                                    shareModal.classList.add('hidden');
                                 }).catch((error) => {
                                     console.error("Error while sharing: ", error);
                                 });
+                            })
+                            .catch(error => {
+                                console.error('Error fetching obituary information:', error);
                             });
-                        } else {
-                            console.error("Share button not found.");
-                        }
+                    } else {
+                        console.log('room 파라미터가 URL에 없습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching KAKAO_APP_KEY:', error);
+                });
+        });
+    }
+
+    const shareSMS = document.getElementById('shareSMS');
+    if (shareSMS) {
+        shareSMS.addEventListener('click', function () {
+            var params = new URLSearchParams(window.location.search);
+            var room = params.get('room');
+
+            if (room) {
+                fetch(`/getObituaryInfoByRoom?room=${room}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Extract the information from the data
+                        var name = data.obituary.name;
+                        var description = `故 ${name}님의 부고를 공유합니다.`;
+                        var chiefMourner = data.obituary.chiefMourner.join(', ');
+                        var roomNumber = data.obituary.room;
+
+                        // Use SMS API or a web-to-SMS service
+                        var smsBody = `${description}\n상주: ${chiefMourner}\n빈소: ${roomNumber}\n\n${window.location.href}`;
+                        var smsUrl = `sms:?&body=${encodeURIComponent(smsBody)}`;
+
+                        window.location.href = smsUrl;
+                        const shareModal = document.getElementById('shareModal');
+                        shareModal.classList.add('hidden');
                     })
                     .catch(error => {
                         console.error('Error fetching obituary information:', error);
@@ -326,8 +325,6 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 console.log('room 파라미터가 URL에 없습니다.');
             }
-        })
-        .catch(error => {
-            console.error('Error fetching KAKAO_APP_KEY:', error);
         });
+    }
 });
