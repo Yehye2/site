@@ -302,20 +302,17 @@ document.addEventListener('DOMContentLoaded', function () {
             var room = params.get('room');
 
             if (room) {
-                fetch(`/getObituaryInfoByRoom?room=${room}`)
-                    .then(response => response.json())
-                    .then(data => {
+                Promise.all([
+                    fetch(`/getObituaryInfoByRoom?room=${room}`).then(response => response.json()),
+                    fetch(`/cheif_mourner?room=${room}`).then(response => response.json())
+                ])
+                    .then(([obituaryData, mournerData]) => {
                         // Extract the information from the data
-                        var name = data.obituary.name;
+                        var name = obituaryData.obituary.name;
                         var description = `故 ${name}님의 부고를 공유합니다.`;
 
-                        var chiefMourner = data.obituary.chiefMourner;
-                        var chiefMournerNames = '';
-                        if (Array.isArray(chiefMourner)) {
-                            chiefMournerNames = chiefMourner.map(mourner => mourner.name).join(', ');
-                        }
-
-                        var roomNumber = data.obituary.room;
+                        var chiefMournerNames = mournerData.map(mourner => mourner.name).join(', ');
+                        var roomNumber = obituaryData.obituary.room;
 
                         // Use SMS API or a web-to-SMS service
                         var smsBody = `${description}\n상주: ${chiefMournerNames}\n빈소: ${roomNumber}\n\n${window.location.href}`;
