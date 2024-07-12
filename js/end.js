@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         var roomNumber = obituaryData.obituary.room;
 
                         // Use SMS API or a web-to-SMS service
-                        var smsBody = `${description}\n상주: ${chiefMournerNames}\n빈소: ${roomNumber}\n\n${window.location.href}`;
+                        var smsBody = `${description}\n\n상주: ${chiefMournerNames}\n빈소: ${roomNumber}\n\n부고장 주소: ${window.location.href}`;
                         var smsUrl = `sms:?&body=${encodeURIComponent(smsBody)}`;
 
                         window.location.href = smsUrl;
