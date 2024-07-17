@@ -69,7 +69,6 @@ function sendMessage() {
         });
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
     // 페이지 로딩 시 상품 목록을 불러옵니다
     fetchProducts();
@@ -81,25 +80,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 const productList = document.getElementById('product-list');
                 productList.innerHTML = products.map(product => `
                 <div class="product-item bg-gray-300 rounded p-4 text-center" style="position: relative;">
-                <img src="${product.image}" alt="${product.name}">
-                <div class="position-absolute" style="bottom: 10px; left: 10px; padding: 5px;">${product.name} - ${product.price}원</div>
-            </div>
+                    <img src="${product.image}" alt="${product.name}" loading="lazy">
+                    <div class="position-absolute" style="bottom: 10px; left: 10px; padding: 5px;">${product.name} - ${product.price}원</div>
+                </div>
                 `).join('');
             })
             .catch(error => console.error('Error:', error));
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    fetch('/api/products')
-        .then(response => response.json())
-        .then(data => {
-            const selectElement = document.getElementById('product');
-            data.forEach(product => {
-                const option = document.createElement('option');
-                option.textContent = product.name;
-                selectElement.appendChild(option);
-            });
-        })
-        .catch(error => console.error('상품 정보를 불러오는 중 오류 발생:', error));
-});
+// document.addEventListener('DOMContentLoaded', function () {
+//     fetch('/api/products')
+//         .then(response => response.json())
+//         .then(data => {
+//             const selectElement = document.getElementById('product');
+//             data.forEach(product => {
+//                 const option = document.createElement('option');
+//                 option.textContent = product.name;
+//                 selectElement.appendChild(option);
+//             });
+//         })
+//         .catch(error => console.error('상품 정보를 불러오는 중 오류 발생:', error));
+// });
