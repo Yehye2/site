@@ -39,6 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('obituaryName').textContent = data.obituary.name;
                     document.getElementById('obituaryDateText').textContent = formattedDate;
                     document.getElementById('room').textContent = `${room}호실`;
+
+                    // 이미지 URL이 존재하면 이미지 요소에 설정
+                    if (data.obituary.image) {
+                        document.getElementById('obituaryImage').src = data.obituary.image;
+                    } else {
+                        // 이미지가 없으면 기본 이미지를 설정하거나 처리
+                        document.getElementById('obituaryImage').src = 'https://img.freepik.com/premium-photo/white-chrysanthemum-flower-isolated-on-black-background_154565-58.jpg';
+                    }
                 } else {
                     // 적절한 처리나 메시지 표시
                     console.log('날짜 정보가 없습니다.');
@@ -51,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('room 파라미터가 URL에 없습니다.');
     }
 });
-
 
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);

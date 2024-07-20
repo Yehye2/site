@@ -168,6 +168,15 @@ function removeMourner() {
 document.getElementById('saveButton').addEventListener('click', function (event) {
     event.preventDefault();
 
+    const formData = new FormData();
+    const form = document.getElementById('obituaryForm');
+
+    // 필요한 필드만 선택하여 FormData 객체에 추가
+    formData.append('obituaryImage', document.getElementById('obituaryImage').files[0]);
+    formData.append('name', document.getElementById('obituaryName').value);
+    formData.append('date', document.getElementById('obituaryDateText').value);
+    formData.append('room', document.getElementById('room').value);
+
     const primaryMournerRelations = document.querySelectorAll('[name="primaryMournerRelation[]"]');
     const primaryMournerNames = document.querySelectorAll('[name="primaryMournerName[]"]');
     const mournerData = Array.from(primaryMournerRelations).map((element, index) => ({
@@ -177,27 +186,17 @@ document.getElementById('saveButton').addEventListener('click', function (event)
 
     // Gather data from form inputs
     var State = document.getElementById('State').value;
-    var obituaryName = document.getElementById('obituaryName').value;
-    var obituaryDateText = document.getElementById('obituaryDateText').value;
     var admission = document.getElementById('admission').value;
     var funeralDate = document.getElementById('funeralDate').value;
     var burialDate = document.getElementById('burialDate').value;
     var bankAccount = document.getElementById('bankAccount').value;
     var room = document.getElementById('room').value;
 
-
     // Data for /submit-obituary-info endpoint
     const fetchPromises = [
         fetch('/submitroomobituaryinfo', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: obituaryName,
-                date: obituaryDateText,
-                room: room
-            })
+            body: formData
         }),
         fetch('/saveRoomObituary', {
             method: 'POST',
@@ -263,23 +262,30 @@ function deleteRoom() {
 document.getElementById('updateButton').addEventListener('click', function (event) {
     event.preventDefault(); // 기본 이벤트 동작 방지
 
-    // 폼에서 데이터 수집
-    var State = document.getElementById('State').value;
-    var obituaryName = document.getElementById('obituaryName').value;
-    var obituaryDateText = document.getElementById('obituaryDateText').value;
-    var admission = document.getElementById('admission').value;
-    var funeralDate = document.getElementById('funeralDate').value;
-    var burialDate = document.getElementById('burialDate').value;
-    var bankAccount = document.getElementById('bankAccount').value;
-    var room = document.getElementById('room').value;
 
-    // 상주 관계와 이름을 수집
+    const formData = new FormData();
+    const form = document.getElementById('obituaryForm');
+
+    // 필요한 필드만 선택하여 FormData 객체에 추가
+    formData.append('obituaryImage', document.getElementById('obituaryImage').files[0]);
+    formData.append('name', document.getElementById('obituaryName').value);
+    formData.append('date', document.getElementById('obituaryDateText').value);
+    formData.append('room', document.getElementById('room').value);
+
     const primaryMournerRelations = document.querySelectorAll('[name="primaryMournerRelation[]"]');
     const primaryMournerNames = document.querySelectorAll('[name="primaryMournerName[]"]');
     const mournerData = Array.from(primaryMournerRelations).map((element, index) => ({
         relation: element.value,
         name: primaryMournerNames[index].value
     }));
+
+    // Gather data from form inputs
+    var State = document.getElementById('State').value;
+    var admission = document.getElementById('admission').value;
+    var funeralDate = document.getElementById('funeralDate').value;
+    var burialDate = document.getElementById('burialDate').value;
+    var bankAccount = document.getElementById('bankAccount').value;
+    var room = document.getElementById('room').value;
 
     // 서버에 수정된 데이터 전송
     const fetchPromises = [
@@ -293,15 +299,8 @@ document.getElementById('updateButton').addEventListener('click', function (even
             })
         }),
         fetch('/updateObituaryInfo', {
-            method: 'PATCH', // PATCH 메서드 사용
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: obituaryName,
-                date: obituaryDateText,
-                room: room
-            })
+            method: 'PATCH',
+            body: formData
         }),
         fetch('/updateRoomObituary', {
             method: 'PATCH', // PATCH 메서드 사용
@@ -318,7 +317,7 @@ document.getElementById('updateButton').addEventListener('click', function (even
             })
         }),
         fetch('/addMourner', {
-            method: 'POST', // POST 메서드 사용
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },

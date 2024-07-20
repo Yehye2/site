@@ -1,13 +1,15 @@
 require('dotenv').config();
+const AWS = require('aws-sdk');
+const { S3Client } = require('@aws-sdk/client-s3');
+const { Upload } = require('@aws-sdk/lib-storage');
 const express = require('express');
 const app = express();
 const http = require('http');
+const multer = require('multer');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const crypto = require("crypto");
 const axios = require("axios");
-const multer = require('multer');
-const upload = multer();
 const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const fs = require('fs');
@@ -17,9 +19,34 @@ const wss = new WebSocket.Server({ server });
 // const s3 = new aws.S3();
 const path = require('path');
 
+const s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
+});
 
-// const rawConfig = fs.readFileSync('config.json');
-// const config = JSON.parse(rawConfig);
+const dbConfig = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
+};
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'testtest9515',
+        acl: 'public-read',
+        metadata: function (req, file, cb) {
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString() + path.extname(file.originalname));
+        }
+    })
+});
 
 // MySQL 데이터베이스 연결 설정
 const db = mysql.createConnection({
@@ -42,7 +69,9 @@ db.connect((err) => {
     console.log('MySQL 데이터베이스에 연결되었습니다.');
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/images', express.static(path.join(__dirname, 'image')));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
@@ -83,29 +112,10 @@ function broadcastChange(data) {
     });
 }
 
-const { S3 } = require('@aws-sdk/client-s3');
-const s3 = new S3({
-    region: 'us-west-2',
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-    }
-});
-
 aws.config.update({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // AWS 비밀 접근 키
     accessKeyId: process.env.AWS_ACCESS_KEY_ID, // AWS 접근 키 ID
     region: 'us-west-2' // 예: 'us-west-2'
-});
-
-// 이미지를 저장할 디렉토리 설정
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'image/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
-    }
 });
 
 const multerUpload = multer({
@@ -498,7 +508,6 @@ app.get('/getObituaryInfo', (req, res) => {
 
 app.get('/getObituaryInfoByRoom', (req, res) => {
     const room = req.query.room;
-    // userId를 사용하여 부고 정보를 조회하는 SQL 쿼리
     const sql = 'SELECT * FROM obituaryinfo WHERE room = ?';
     db.query(sql, [room], (err, results) => {
         if (err) {
@@ -547,19 +556,39 @@ app.post('/submit-obituary-info', (req, res) => {
     });
 });
 
-app.post('/submitroomobituaryinfo', (req, res) => {
-    const { name, date, room } = req.body;  // 클라이언트에서 전송한 이름과 날짜
+// app.post('/submitroomobituaryinfo', (req, res) => {
+//     const { name, date, room } = req.body;  // 클라이언트에서 전송한 이름과 날짜
 
-    // 데이터베이스에 저장할 쿼리를 작성합니다.
-    const sql = 'INSERT INTO obituaryinfo (name, date,room) VALUES (?, ?, ?)';
-    db.query(sql, [name, date, room], (err, result) => {
+//     // 데이터베이스에 저장할 쿼리를 작성합니다.
+//     const sql = 'INSERT INTO obituaryinfo (name, date,room) VALUES (?, ?, ?)';
+//     db.query(sql, [name, date, room], (err, result) => {
+//         if (err) {
+//             console.error(err);
+//             res.status(500).send('부고 정보 저장 실패');
+//             return;
+//         }
+
+//         // 저장 성공 응답
+//         res.send('정보가 저장되었습니다.');
+//     });
+// });
+
+// 이미지 업로드 엔드포인트
+app.post('/submitroomobituaryinfo', upload.single('obituaryImage'), (req, res) => {
+    let imageUrl = '';
+
+    if (req.file) {
+        imageUrl = req.file.location;  // S3에 업로드된 이미지 URL
+    }
+
+    const { name, date, room } = req.body;
+
+    const sql = 'INSERT INTO obituaryinfo (name, date, room, image) VALUES (?, ?, ?, ?)';
+    db.query(sql, [name, date, room, imageUrl], (err, result) => {
         if (err) {
             console.error(err);
-            res.status(500).send('부고 정보 저장 실패');
-            return;
+            return res.status(500).send('부고 정보 저장 실패');
         }
-
-        // 저장 성공 응답
         res.send('정보가 저장되었습니다.');
     });
 });
@@ -664,23 +693,41 @@ app.delete('/order/:id', function (req, res) {
 });
 
 // 상주 정보 저장을 위한 POST 요청 처리
-app.post('/addMourner', (req, res) => {
+app.post('/addMourner', async (req, res) => {
     const { primaryMournerRelation, primaryMournerName, room } = req.body;
-    // SQL 쿼리에서 모든 값에 대한 플레이스홀더를 포함시킵니다.
-    const query = 'INSERT INTO cheif_mourner (relation, name, room) VALUES ?';
 
-    // 모든 주요 애도자 관계, 이름, 그리고 공통적으로 받은 방 번호를 매핑합니다.
-    const values = primaryMournerRelation.map((relation, index) => [
-        relation, primaryMournerName[index], room
-    ]);
+    if (!primaryMournerRelation || !primaryMournerName || !room) {
+        return res.status(400).send('Missing required fields');
+    }
 
-    connection.query(query, [values], (error, results, fields) => {
-        if (error) {
-            console.error(error); // 오류 메시지를 콘솔에 출력
-            return res.status(500).send('Error saving to database');
+    let connection;
+
+    try {
+        connection = await mysql.createConnection(dbConfig);
+
+        await connection.beginTransaction();
+
+        for (let i = 0; i < primaryMournerRelation.length; i++) {
+            const relation = primaryMournerRelation[i];
+            const name = primaryMournerName[i];
+
+            const query = 'INSERT INTO cheif_mourner (relation, name, room) VALUES (?, ?, ?)';
+            await connection.query(query, [relation, name, room]);
         }
-        res.send('Mourner information saved successfully');
-    });
+
+        await connection.commit();
+        res.status(200).send('Mourners added successfully');
+    } catch (error) {
+        if (connection) {
+            await connection.rollback();
+        }
+        console.error('Error adding mourners:', error);
+        res.status(500).send('Error adding mourners');
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
+    }
 });
 
 app.get('/cheif_mourner', (req, res) => {
@@ -701,10 +748,26 @@ app.get('/cheif_mourner', (req, res) => {
 });
 
 // '/updateObituaryInfo' 엔드포인트에 대한 PATCH 요청 핸들러
-app.patch('/updateObituaryInfo', (req, res) => {
+app.patch('/updateObituaryInfo', upload.single('obituaryImage'), (req, res) => {
     const { name, date, room } = req.body;
-    const sql = "UPDATE obituaryinfo SET date = ?, name = ? WHERE room = ?";
-    db.query(sql, [date, name, room], (err, result) => { // date와 name의 위치 수정
+    let imageUrl = null;
+
+    if (req.file) {
+        imageUrl = req.file.location;  // S3에 업로드된 이미지 URL
+    }
+
+    let sql = "UPDATE obituaryinfo SET date = ?, name = ?";
+    let params = [date, name];
+
+    if (imageUrl) {
+        sql += ", image = ?";
+        params.push(imageUrl);
+    }
+
+    sql += " WHERE room = ?";
+    params.push(room);
+
+    db.query(sql, params, (err, result) => {
         if (err) {
             console.error('MySQL 에러:', err);
             res.status(500).send('정보 수정 중 오류가 발생했습니다.');
