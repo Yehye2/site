@@ -133,7 +133,7 @@ footer a:hover {
 }
 
 h1 {
-  font-size: 32px; /* 제목 크기 증가 */
+  font-size: 1px; /* 제목 크기 증가 */
 }
 
 h2 {
@@ -164,4 +164,8 @@ p {
   background-color: transparent; /* p 요소의 배경색을 투명하게 설정 */
   padding: 0; /* p 요소의 내부 여백을 없앰 */
   border-radius: 0; /* p 요소의 모서리를 직각으로 설정 */
+}
+
+.obituary-field {
+  font-size: 2.5rem; /* 원하는 폰트 크기로 설정 */
 }

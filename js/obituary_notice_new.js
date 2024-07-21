@@ -256,11 +256,10 @@ function submitCondolence() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    var mapOptions = {
-        center: new naver.maps.LatLng(34.802127781, 126.413207992165),
-        zoom: 17
-    };
+var mapOptions = {
+    center: new naver.maps.LatLng(34.802127781, 126.413207992165),
+    zoom: 17,
+    disableNetworkBar: true
+};
 
-    var map = new naver.maps.Map('map', mapOptions);
-});
+var map = new naver.maps.Map('map', mapOptions);
