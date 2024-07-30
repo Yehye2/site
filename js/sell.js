@@ -89,16 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     fetch('/api/products')
-//         .then(response => response.json())
-//         .then(data => {
-//             const selectElement = document.getElementById('product');
-//             data.forEach(product => {
-//                 const option = document.createElement('option');
-//                 option.textContent = product.name;
-//                 selectElement.appendChild(option);
-//             });
-//         })
-//         .catch(error => console.error('상품 정보를 불러오는 중 오류 발생:', error));
-// });
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/api/products')
+        .then(response => response.json())
+        .then(data => {
+            const selectElement = document.getElementById('product');
+            data.forEach(product => {
+                const option = document.createElement('option');
+                option.textContent = product.name;
+                selectElement.appendChild(option);
+            });
+        })
+        .catch(error => console.error('상품 정보를 불러오는 중 오류 발생:', error));
+});
