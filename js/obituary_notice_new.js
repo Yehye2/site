@@ -60,43 +60,66 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    var params = new URLSearchParams(window.location.search);
-    var userId = params.get('userId');
+// document.addEventListener('DOMContentLoaded', function () {
+//     var params = new URLSearchParams(window.location.search);
+//     var userId = params.get('userId');
 
-    if (userId) {
-        fetch(`/getobituarynotice?userId=${userId}`)
-            .then(response => response.json())
-            .then(data => {
-                // Update the HTML elements with the retrieved information
-                document.getElementById('admission').textContent = data.obituary.admission;
-                document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
-                document.getElementById('burialDate').textContent = data.obituary.burialDate;
-                document.getElementById('bankAccount').value = data.obituary.bankAccount;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    } else {
-        console.log('userId parameter not found in URL.');
-    }
-});
+//     if (userId) {
+//         fetch(`/getobituarynotice?userId=${userId}`)
+//             .then(response => response.json())
+//             .then(data => {
+//                 // Update the HTML elements with the retrieved information
+//                 document.getElementById('admission').textContent = data.obituary.admission;
+//                 document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
+//                 document.getElementById('burialDate').textContent = data.obituary.burialDate;
+//                 document.getElementById('bankAccount').value = data.obituary.bankAccount;
+//             })
+//             .catch(error => {
+//                 console.error('Error:', error);
+//             });
+//     } else {
+//         console.log('userId parameter not found in URL.');
+//     }
+// });
 
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
     var room = params.get('room');
+    var userId = params.get('userId');  // userId 가져오기
 
     if (room) {
         fetch(`/getobituarynoticeByRoom?room=${room}`)
             .then(response => response.json())
             .then(data => {
-                // Update the HTML elements with the retrieved information
+                // 기본 부고 정보 업데이트
                 document.getElementById('admission').textContent = data.obituary.admission;
                 document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
                 document.getElementById('burialDate').textContent = data.obituary.burialDate;
-                document.getElementById('bankAccount').value = data.obituary.bankAccount;
-                // Room 값을 표시
                 document.getElementById('room').textContent = `${room}호실`;
+
+                // userId가 있는 경우, 해당 유저의 계좌 정보 가져오기
+                if (userId) {
+                    fetch(`/getUserData?room=${room}`)
+                        .then(response => response.json())
+                        .then(userData => {
+                            if (userData.status === 'success' && Array.isArray(userData.data)) {
+                                var user = userData.data.find(u => u.Id == userId);
+                                if (user) {
+                                    document.getElementById('bankAccount').value = user.account;  // 유저 계좌 정보 설정
+                                } else {
+                                    console.error('해당 유저 ID에 맞는 데이터를 찾을 수 없습니다.');
+                                }
+                            } else {
+                                console.error('사용자 데이터를 가져오는 데 실패했습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('사용자 데이터 요청 중 에러 발생:', error);
+                        });
+                } else {
+                    // userId가 없는 경우 기본 부고 데이터의 계좌 정보 설정
+                    document.getElementById('bankAccount').value = data.obituary.bankAccount;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -105,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('URL에 room 파라미터가 없습니다.');
     }
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);

@@ -49,8 +49,8 @@ function fetchUserData(room) {
                     table += '<td>' + user.account + '</td>';
                     table += '<td>' + user.room + '</td>';
                     table += '<td>' + user.relationship + '</td>';
-                    table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-room="' + room + '">문자 발송</button>';
-                    table += '<td><button class="send-kakao-button" data-phone="' + user.phone + '" data-room="' + room + '">알림톡 발송</button>';
+                    table += '<td><button class="send-sms-button" data-phone="' + user.phone + '" data-room="' + room + '" data-id="' + user.Id + '">문자 발송</button></td>';
+                    table += '<td><button class="send-kakao-button" data-phone="' + user.phone + '" data-room="' + room + '" data-id="' + user.Id + '">알림톡 발송</button></td>';
                     table += '<td> <button onclick="deleteUserData(' + user.Id + ')">삭제</button></td>';
                     table += '</tr>';
                 });
@@ -151,6 +151,7 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
     if (e.target && e.target.classList.contains('send-sms-button')) {
         var phoneNumber = e.target.getAttribute('data-phone');
         var room = e.target.getAttribute('data-room');
+        var userId = e.target.getAttribute('data-id'); // 유저 ID 가져오기
 
         // /getObituaryInfoByRoom 요청을 보냅니다
         fetch(`/getObituaryInfoByRoom?room=${room}`)
@@ -171,7 +172,7 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
 
                                 // sendMessage 함수에 필요한 데이터를 전달합니다
                                 console.log('발송할 메시지:', mournersString);
-                                sendMessage(phoneNumber, name, room, mournersString);
+                                sendMessage(phoneNumber, name, room, mournersString, userId); // 유저 ID 추가
                             } else {
                                 console.error('상주 정보를 찾을 수 없습니다. 응답 데이터:', mournersData);
                                 alert('상주 정보를 찾을 수 없습니다.');
@@ -240,7 +241,7 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
     }
 });
 
-function sendMessage(phoneNumber, name, room, mournersString) {
+function sendMessage(phoneNumber, name, room, mournersString, userId) {  // userId 추가
     // mournersString의 각 관계를 줄바꿈으로 처리합니다.
     // 이를 위해 각 관계를 분리한 후 줄바꿈으로 조인합니다.
     var formattedMournersString = mournersString.split(', ').join('\n');
@@ -263,7 +264,7 @@ ${formattedMournersString}
 지인분들께
 부고장을 공유하실 수 있습니다.
 
-[부고장](https://port-0-site-754g42alukrlrej.sel5.cloudtype.app/notice?room=${room})
+[부고장](https://port-0-site-754g42alukrlrej.sel5.cloudtype.app/notice?room=${room}&userId=${userId})
 `;
 
     console.log('발송할 메시지:', message);  // 디버깅용 로그
@@ -281,6 +282,8 @@ ${formattedMournersString}
             alert('문자 발송 중 오류가 발생했습니다.');
         });
 }
+
+
 function sendKakao(phoneNumber, name, room, mournersString) {
     var formattedMournersString = mournersString.split(', ').join('\n');
     var message = room; // 'room' 변수의 값을 URL에 추가

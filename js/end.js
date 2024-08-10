@@ -39,45 +39,62 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
     var room = params.get('room');
+    var random = params.get('random');  // random 값 가져오기
 
     if (room) {
+        // 기본 부고 정보를 가져오는 요청
         fetch(`/getobituarynoticeByRoom?room=${room}`)
             .then(response => response.json())
             .then(data => {
-                // Update the HTML elements with the retrieved information
+                // 기본 부고 정보 업데이트
                 document.getElementById('admission').textContent = data.obituary.admission;
                 document.getElementById('funeralDate').textContent = data.obituary.funeralDate;
                 document.getElementById('burialDate').textContent = data.obituary.burialDate;
-                document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
-                // Room 값을 표시
                 document.getElementById('room').textContent = `${room}호실`;
+
+                if (random) {
+                    // random 값이 있으면 /getobituarynoticeByRandom 요청을 보내 bankAccount만 업데이트
+                    fetch(`/getobituarynoticeByRandom?random=${random}`)
+                        .then(response => response.json())
+                        .then(randomData => {
+                            document.getElementById('bankAccount').textContent = randomData.obituary.bankAccount;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching bank account by random:', error);
+                        });
+                } else {
+                    // random 값이 없으면 기본 bankAccount 값 사용
+                    document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
+                }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error fetching obituary notice by room:', error);
             });
     } else {
         console.log('URL에 room 파라미터가 없습니다.');
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    var params = new URLSearchParams(window.location.search);
-    var random = params.get('random');
 
-    if (random) {
-        fetch(`/getobituarynoticeByRandom?random=${random}`)
-            .then(response => response.json())
-            .then(data => {
-                // Update the HTML elements with the retrieved information
-                document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    } else {
-        console.log('userId parameter not found in URL.');
-    }
-});
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     var params = new URLSearchParams(window.location.search);
+//     var random = params.get('random');
+
+//     if (random) {
+//         fetch(`/getobituarynoticeByRandom?random=${random}`)
+//             .then(response => response.json())
+//             .then(data => {
+//                 // Update the HTML elements with the retrieved information
+//                 document.getElementById('bankAccount').textContent = data.obituary.bankAccount;
+//             })
+//             .catch(error => {
+//                 console.error('Error:', error);
+//             });
+//     } else {
+//         console.log('userId parameter not found in URL.');
+//     }
+// });
 
 document.addEventListener('DOMContentLoaded', (event) => {
     function saveContent() {
