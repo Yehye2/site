@@ -196,11 +196,12 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
 
 
 document.getElementById('userInfoDisplay').addEventListener('click', function (e) {
-    if (e.target && e.target.classList.contains('send-kakao-button')) {
+    if (e.target && e.target.classList.contains('send-sms-button')) {
         var phoneNumber = e.target.getAttribute('data-phone');
         var room = e.target.getAttribute('data-room');
+        var userId = e.target.getAttribute('data-id'); // 유저 ID 가져오기
 
-        // /getObituaryInfoByRoom 요청을 보냅니다.
+        // /getObituaryInfoByRoom 요청을 보냅니다
         fetch(`/getObituaryInfoByRoom?room=${room}`)
             .then(response => response.json())
             .then(data => {
@@ -219,7 +220,7 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
 
                                 // sendMessage 함수에 필요한 데이터를 전달합니다
                                 console.log('발송할 메시지:', mournersString);
-                                sendKakao(phoneNumber, name, room, mournersString);
+                                sendMessage(phoneNumber, name, room, mournersString, userId); // 유저 ID 추가
                             } else {
                                 console.error('상주 정보를 찾을 수 없습니다. 응답 데이터:', mournersData);
                                 alert('상주 정보를 찾을 수 없습니다.');
@@ -284,7 +285,7 @@ ${formattedMournersString}
 }
 
 
-function sendKakao(phoneNumber, name, room, mournersString) {
+function sendKakao(phoneNumber, name, room, mournersString, userId) {
     var formattedMournersString = mournersString.split(', ').join('\n');
     var message = room; // 'room' 변수의 값을 URL에 추가
 
@@ -293,6 +294,7 @@ function sendKakao(phoneNumber, name, room, mournersString) {
         text: message,
         name: name,
         room: room,
+        userId: userId,
         mournersString: formattedMournersString // 필요한 경우 서버로 mournersString 데이터를 보냅니다.
     })
         .then(response => {
