@@ -196,7 +196,7 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
 
 
 document.getElementById('userInfoDisplay').addEventListener('click', function (e) {
-    if (e.target && e.target.classList.contains('send-sms-button')) {
+    if (e.target && e.target.classList.contains('send-kakao-button')) {
         var phoneNumber = e.target.getAttribute('data-phone');
         var room = e.target.getAttribute('data-room');
         var userId = e.target.getAttribute('data-id'); // 유저 ID 가져오기
@@ -220,7 +220,7 @@ document.getElementById('userInfoDisplay').addEventListener('click', function (e
 
                                 // sendMessage 함수에 필요한 데이터를 전달합니다
                                 console.log('발송할 메시지:', mournersString);
-                                sendMessage(phoneNumber, name, room, mournersString, userId); // 유저 ID 추가
+                                sendKakao(phoneNumber, name, room, mournersString, userId); // 유저 ID 추가
                             } else {
                                 console.error('상주 정보를 찾을 수 없습니다. 응답 데이터:', mournersData);
                                 alert('상주 정보를 찾을 수 없습니다.');
